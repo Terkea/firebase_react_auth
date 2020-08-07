@@ -7,7 +7,6 @@ import Logout from "./components/Logout";
 import Register from "./components/Register";
 
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
 import * as actions from "./store/actions/user";
 
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
