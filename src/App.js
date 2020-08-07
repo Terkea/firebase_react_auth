@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import React, { useEffect } from "react";
 
-function App() {
+import Home from "./components/Home";
+import Login from "./components/Login";
+import Logout from "./components/Logout";
+import Register from "./components/Register";
+
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import * as actions from "./store/actions/user";
+
+import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
+import "./App.css";
+
+const App = (props) => {
+  useEffect(() => {
+    props.autoLogIn();
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route exact path="/logout" component={Logout} />
+        <Route exact path="/register" component={Register} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/logout" component={Logout} />
+      </Switch>
+    </Router>
   );
-}
+};
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    loading: state.user.loading,
+    error: state.user.error,
+    payload: state.user.payload,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    autoLogIn: () => dispatch(actions.autoLogin()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
