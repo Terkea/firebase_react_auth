@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { withRouter, useHistory } from "react-router-dom";
+import { withRouter, Redirect, useHistory } from "react-router-dom";
 import * as actions from "../store/actions/user";
 
 import { Row, Col, Form, Input, Button, Typography, AutoComplete } from "antd";
-import {
-  LockOutlined,
-  RocketOutlined,
-  MailOutlined,
-} from "@ant-design/icons";
+import { LockOutlined, RocketOutlined, MailOutlined } from "@ant-design/icons";
 
 import SvgBackground from "../containers/SvgBackground";
 
@@ -39,6 +35,7 @@ const Register = (props) => {
       }
     } catch {}
   });
+  
   // E-mail autocomplete
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
 

@@ -5,6 +5,7 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
 import Register from "./components/Register";
+import CustomLayout from "./containers/Layout";
 
 import { connect } from "react-redux";
 import * as actions from "./store/actions/user";
@@ -20,22 +21,16 @@ const App = (props) => {
   return (
     <Router>
       <Switch>
-        <Route exact path="/" component={Home} />
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/register" component={Register} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/logout" component={Logout} />
+        <CustomLayout {...props}>
+          <Route exact path="/my_profile/" component={Home} />
+        </CustomLayout>
       </Switch>
     </Router>
   );
-};
-
-const mapStateToProps = (state) => {
-  return {
-    loading: state.user.loading,
-    error: state.user.error,
-    payload: state.user.payload,
-  };
 };
 
 const mapDispatchToProps = (dispatch) => {
@@ -44,4 +39,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(null, mapDispatchToProps)(App);
