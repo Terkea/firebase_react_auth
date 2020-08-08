@@ -6,6 +6,7 @@ import Login from "./components/Login";
 import Logout from "./components/Logout";
 import Register from "./components/Register";
 import CustomLayout from "./containers/Layout";
+import MyProfile from "./components/MyProfile";
 
 import { connect } from "react-redux";
 import * as actions from "./store/actions/user";
@@ -28,6 +29,7 @@ const App = (props) => {
 
         <CustomLayout {...props}>
           <Route exact path="/" component={Home} />
+          <Route exact path="/my_profile" component={MyProfile} />
         </CustomLayout>
       </Switch>
     </Router>

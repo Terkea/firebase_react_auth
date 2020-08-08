@@ -69,6 +69,25 @@ export const logout = () => {
   };
 };
 
+export const updateProfileSuccess = (user) => {
+  return {
+    type: actionTypes.UPDATE_PROFILE_SUCCESS,
+    error: null,
+    loading: false,
+    payload: user,
+    isAuthenticated: true,
+  };
+};
+
+export const updateProfileFail = (error) => {
+  return {
+    type: actionTypes.UPDATE_PROFILE_FAIL,
+    error: error,
+    loading: false,
+    isAuthenticated: true,
+  };
+};
+
 export const registerUser = (email, password) => (dispatch) => {
   dispatch(registerStart(email));
 
@@ -99,10 +118,10 @@ export const signInUser = (email, password) => (dispatch) => {
     });
 };
 
-// Checks for the existance of the user object in localStorage
+// Checks for the existence of the user object in localStorage
 // if it exists auto logs in the user based on that object
-// otherwise uses the firebase observer to detect the logged in user
-// and dispatches the appropiate actions
+// otherwise use the firebase observer to detect the logged-in user
+// and dispatches the appropriate actions
 
 // the reason why I opted for this approach is well explained in here
 // https://stackoverflow.com/q/63309298/8193864
@@ -127,4 +146,45 @@ export const logoutUser = () => (dispatch) => {
   localStorage.removeItem("authUser");
   auth.signOut();
   dispatch(logout());
+};
+
+export const updateProfile = (data) => (dispatch) => {
+  console.log(data);
+  auth
+    .signInWithEmailAndPassword(data.oldEmail, data.password)
+    .then((res) => {
+      if (data.newEmail) {
+        console.log(res.user);
+        res.user
+          .updateEmail(data.newEmail)
+          .then(() => {
+            localStorage.removeItem("authUser");
+            localStorage.setItem("authUser", JSON.stringify(res.user));
+            dispatch(updateProfileSuccess(res.user));
+          })
+          .catch((err) => {
+            console.log(err);
+            // dispatch(updateProfileFail(err));
+          });
+
+        res.user
+          .updateProfile({
+            displayName: data.displayName,
+            photoURL: data.photoURL,
+          })
+          .then(() => {
+            localStorage.removeItem("authUser");
+            localStorage.setItem("authUser", JSON.stringify(res.user));
+            dispatch(updateProfileSuccess(res.user));
+          })
+          .catch((err) => {
+            console.log(err);
+            // dispatch(updateProfileFail(err));
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      // dispatch(updateProfileFail(err));
+    });
 };

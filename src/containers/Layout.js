@@ -34,9 +34,14 @@ const CustomLayout = (props) => {
               <Link to="/logout">Logout</Link>
             </Menu.Item>
           ) : null}
+          {props.isAuthenticated === true ? (
+            <Menu.Item key="/my_profile">
+              <Link to="/my_profile">My profile</Link>
+            </Menu.Item>
+          ) : null}
         </Menu>
       </Header>
-      <Content style={{ padding: "0 50px" }}>
+      <Content style={{ padding: "0 10px", height: "90vh" }}>
         <div style={{ padding: 24 }}>{props.children}</div>
       </Content>
       <Footer style={{ textAlign: "center" }}>IDK YET</Footer>
