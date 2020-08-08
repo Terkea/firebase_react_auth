@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Input, Form, Row, Col, Typography, Avatar, Button } from "antd";
 import { UserOutlined, PhoneOutlined, LockOutlined } from "@ant-design/icons";
 
@@ -9,13 +9,30 @@ import { useHistory } from "react-router-dom";
 const { Title, Text } = Typography;
 
 const MyProfile = (props) => {
-  const history = useHistory();
+  const [currentEmail, setCurrentEmail] = useState("");
+  const [avatar, setAvatar] = useState(null);
+  const [currentDisplayName, setCurrentDisplayName] = useState(null);
+
+  const handleInputChange = (e) =>
+    setCurrentEmail({
+      ...currentEmail,
+      [e.currentTarget.name]: e.currentTarget.value,
+    });
+
   // Check if the user is authenticated
+  const history = useHistory();
   useEffect(() => {
     if (props.isAuthenticated) {
       history.push("/");
     }
+    try {
+      setCurrentEmail(props.payload.providerData[0].email);
+      setAvatar(props.payload.providerData[0].photoURL);
+      setCurrentDisplayName(props.payload.providerData[0].displayName);
+    } catch (error) {}
   });
+
+  // console.log(sex);
 
   // https://stackoverflow.com/a/61244400/8193864
   const [form] = Form.useForm();
@@ -54,11 +71,10 @@ const MyProfile = (props) => {
 
           <Col style={{ marginLeft: "10px" }} md={8}>
             <Form
+              // initialValues={{
+              //   newEmail: currentEmail,
+              // }}
               form={form}
-              initialValues={{
-                newEmail: props.payload.providerData[0].email,
-                displayName: props.payload.providerData[0].displayName,
-              }}
               name="normal_login"
               className="login-form"
               onFinish={onFinish}
@@ -80,10 +96,14 @@ const MyProfile = (props) => {
               <Form.Item
                 name="newEmail"
                 rules={[
-                  { required: true, message: "Please input your E-mail!" },
+                  { required: false, message: "Please input your E-mail!" },
                 ]}
               >
                 <Input
+                  name="newEmail"
+                  key={`newEmail:${currentEmail}`}
+                  defaultValue={currentEmail}
+                  onChange={handleInputChange}
                   prefix={<UserOutlined className="site-form-item-icon" />}
                 />
               </Form.Item>
@@ -110,7 +130,11 @@ const MyProfile = (props) => {
               </Button>
             </Form>
             {/* error handling */}
-            {props.error ? <Text type="danger">{props.error}</Text> : null}
+            {props.error ? (
+              <Text type="danger" style={{ marginTop: "20px" }}>
+                {props.error}
+              </Text>
+            ) : null}
           </Col>
         </Row>
       </Col>

@@ -164,7 +164,7 @@ export const updateProfile = (data) => (dispatch) => {
           })
           .catch((err) => {
             console.log(err);
-            // dispatch(updateProfileFail(err));
+            dispatch(updateProfileFail(err.message));
           });
 
         res.user
@@ -179,12 +179,12 @@ export const updateProfile = (data) => (dispatch) => {
           })
           .catch((err) => {
             console.log(err);
-            // dispatch(updateProfileFail(err));
+            dispatch(updateProfileFail(err.message));
           });
       }
     })
     .catch((err) => {
-      console.log(err);
-      // dispatch(updateProfileFail(err));
+      console.log("EROARE LOGIN", err);
+      dispatch(updateProfileFail(err.message));
     });
 };
