@@ -92,7 +92,6 @@ export const signInUser = (email, password) => (dispatch) => {
     .then((data) => {
       console.log(data.user);
       dispatch(authSuccess(data.user));
-      localStorage.setItem("authUser", JSON.stringify(data.user));
     })
     .catch((err) => {
       console.log(err);
@@ -100,14 +99,30 @@ export const signInUser = (email, password) => (dispatch) => {
     });
 };
 
+// Checks for the existance of the user object in localStorage
+// if it exists auto logs in the user based on that object
+// otherwise uses the firebase observer to detect the logged in user
+// and dispatches the appropiate actions
+
+// the reason why I opted for this approach is well explained in here
+// https://stackoverflow.com/q/63309298/8193864
 export const autoLogin = () => (dispatch) => {
   if (JSON.parse(localStorage.getItem("authUser"))) {
     dispatch(authSuccess(JSON.parse(localStorage.getItem("authUser"))));
   } else {
-    dispatch(logoutUser());
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        localStorage.setItem("authUser", JSON.stringify(user));
+        dispatch(authSuccess(user));
+      } else {
+        dispatch(logoutUser);
+      }
+    });
   }
 };
 
+// Removes the localStorage user object, destroys the
+// firebase auth session and dispatches the logout action
 export const logoutUser = () => (dispatch) => {
   localStorage.removeItem("authUser");
   auth.signOut();
