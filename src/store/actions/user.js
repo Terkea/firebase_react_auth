@@ -1,3 +1,4 @@
+import firebase from "firebase/app";
 import * as actionTypes from "./actionTypes";
 import { auth } from "../../firebase";
 
@@ -34,6 +35,7 @@ export const authStart = (email) => {
     error: null,
     loading: true,
     payload: { email },
+    isAuthenticated: false,
   };
 };
 
@@ -43,6 +45,7 @@ export const authSuccess = (user) => {
     error: null,
     loading: false,
     payload: user,
+    isAuthenticated: true,
   };
 };
 
@@ -52,6 +55,7 @@ export const authFail = (error) => {
     error: error,
     loading: false,
     payload: null,
+    isAuthenticated: false,
   };
 };
 
@@ -61,6 +65,7 @@ export const logout = () => {
     error: null,
     loading: false,
     payload: null,
+    isAuthenticated: false,
   };
 };
 
@@ -94,12 +99,8 @@ export const signInUser = (email, password) => (dispatch) => {
     });
 };
 
-export const autoLogin = () => (dispatch) => {
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      dispatch(authSuccess(user));
-    }
-  });
+export const autoLogin = (user) => (dispatch) => {
+  dispatch(authSuccess(user));
 };
 
 export const logoutUser = () => (dispatch) => {

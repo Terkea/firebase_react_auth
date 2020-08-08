@@ -33,6 +33,7 @@ const authStart = (state, action) => {
   return updateObject(state, {
     loading: action.loading,
     payload: action.payload,
+    isAuthenticated: action.isAuthenticated,
   });
 };
 
@@ -41,6 +42,7 @@ const authSuccess = (state, action) => {
     loading: action.loading,
     error: action.error,
     payload: action.payload,
+    isAuthenticated: action.isAuthenticated,
   });
 };
 
@@ -48,6 +50,7 @@ const authFail = (state, action) => {
   return updateObject(state, {
     loading: action.loading,
     error: action.error,
+    isAuthenticated: action.isAuthenticated,
   });
 };
 
@@ -56,6 +59,7 @@ const logout = (state, action) => {
     loading: action.loading,
     error: action.error,
     payload: action.payload,
+    isAuthenticated: action.isAuthenticated,
   });
 };
 

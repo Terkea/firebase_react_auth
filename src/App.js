@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import Home from "./components/Home";
 import Login from "./components/Login";
@@ -13,9 +13,17 @@ import * as actions from "./store/actions/user";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 import "./App.css";
 
+import { auth } from "./firebase";
+
 const App = (props) => {
   useEffect(() => {
-    props.autoLogIn();
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        props.autoLogIn(user);
+      } else {
+        props.logout();
+      }
+    });
   });
 
   return (
@@ -25,18 +33,29 @@ const App = (props) => {
         <Route exact path="/register" component={Register} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/logout" component={Logout} />
+
         <CustomLayout {...props}>
-          <Route exact path="/my_profile/" component={Home} />
+          <Route exact path="/" component={Home} />
         </CustomLayout>
       </Switch>
     </Router>
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapStateToProps = (state) => {
   return {
-    autoLogIn: () => dispatch(actions.autoLogin()),
+    loading: state.user.loading,
+    error: state.user.error,
+    payload: state.user.payload,
+    isAuthenticated: state.user.isAuthenticated,
   };
 };
 
-export default connect(null, mapDispatchToProps)(App);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    autoLogIn: (user) => dispatch(actions.autoLogin(user)),
+    logout: () => dispatch(actions.logoutUser()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
