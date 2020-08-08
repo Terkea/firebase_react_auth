@@ -90,8 +90,9 @@ export const signInUser = (email, password) => (dispatch) => {
   auth
     .signInWithEmailAndPassword(email, password)
     .then((data) => {
-      console.log(data);
-      dispatch(authSuccess(data));
+      console.log(data.user);
+      dispatch(authSuccess(data.user));
+      localStorage.setItem("authUser", JSON.stringify(data.user));
     })
     .catch((err) => {
       console.log(err);
@@ -99,11 +100,16 @@ export const signInUser = (email, password) => (dispatch) => {
     });
 };
 
-export const autoLogin = (user) => (dispatch) => {
-  dispatch(authSuccess(user));
+export const autoLogin = () => (dispatch) => {
+  if (JSON.parse(localStorage.getItem("authUser"))) {
+    dispatch(authSuccess(JSON.parse(localStorage.getItem("authUser"))));
+  } else {
+    dispatch(logoutUser());
+  }
 };
 
 export const logoutUser = () => (dispatch) => {
+  localStorage.removeItem("authUser");
   auth.signOut();
   dispatch(logout());
 };

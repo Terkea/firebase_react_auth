@@ -29,11 +29,9 @@ const Login = (props) => {
   const history = useHistory();
   // Check if the user is authenticated
   useEffect(() => {
-    try {
-      if (props.payload.providerData) {
-        history.push("/");
-      }
-    } catch {}
+    if (props.isAuthenticated) {
+      history.push("/");
+    }
   });
 
   // E-mail autocomplete
@@ -134,6 +132,7 @@ const mapStateToProps = (state) => {
     loading: state.user.loading,
     error: state.user.error,
     payload: state.user.payload,
+    isAuthenticated: state.user.isAuthenticated,
   };
 };
 

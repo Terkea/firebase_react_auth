@@ -1,14 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Layout, Menu } from "antd";
-import {
-  Link,
-  withRouter,
-  useLocation,
-  Redirect,
-  useHistory,
-} from "react-router-dom";
-import { connect } from "react-redux";
-import * as actions from "../store/actions/user";
+import { Link } from "react-router-dom";
 
 const { Header, Content, Footer } = Layout;
 
@@ -24,24 +16,24 @@ const CustomLayout = (props) => {
 
           {/* PUBLIC ROUTES */}
 
-          {props.isAuthenticated === false ? (
+          {props.isAuthenticated === true ? null : (
             <Menu.Item key="/login">
               <Link to="/login/">Login</Link>
             </Menu.Item>
-          ) : null}
+          )}
 
-          {props.isAuthenticated === false ? (
+          {props.isAuthenticated === true ? null : (
             <Menu.Item key="/register">
               <Link to="/register">Register</Link>
             </Menu.Item>
-          ) : null}
+          )}
 
           {/* AUTH ROUTES */}
-          {props.isAuthenticated === false ? null : (
+          {props.isAuthenticated === true ? (
             <Menu.Item key="/logout">
               <Link to="/logout">Logout</Link>
             </Menu.Item>
-          )}
+          ) : null}
         </Menu>
       </Header>
       <Content style={{ padding: "0 50px" }}>
@@ -51,6 +43,5 @@ const CustomLayout = (props) => {
     </Layout>
   );
 };
-
 
 export default CustomLayout;

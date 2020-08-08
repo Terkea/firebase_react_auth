@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import Home from "./components/Home";
 import Login from "./components/Login";
@@ -13,18 +13,10 @@ import * as actions from "./store/actions/user";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 import "./App.css";
 
-import { auth } from "./firebase";
-
 const App = (props) => {
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        props.autoLogIn(user);
-      } else {
-        props.logout();
-      }
-    });
-  });
+    props.autoLogIn();
+  }, []);
 
   return (
     <Router>
@@ -53,7 +45,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    autoLogIn: (user) => dispatch(actions.autoLogin(user)),
+    autoLogIn: () => dispatch(actions.autoLogin()),
     logout: () => dispatch(actions.logoutUser()),
   };
 };
