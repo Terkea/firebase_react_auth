@@ -158,6 +158,7 @@ export const updateProfile = (data) => (dispatch) => {
         res.user
           .updateEmail(data.newEmail)
           .then(() => {
+            console.log("email update");
             localStorage.removeItem("authUser");
             localStorage.setItem("authUser", JSON.stringify(res.user));
             dispatch(updateProfileSuccess(res.user));

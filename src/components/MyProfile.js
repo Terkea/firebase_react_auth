@@ -9,15 +9,14 @@ import { useHistory } from "react-router-dom";
 const { Title, Text } = Typography;
 
 const MyProfile = (props) => {
-  const [currentEmail, setCurrentEmail] = useState("");
-  const [avatar, setAvatar] = useState(null);
-  const [currentDisplayName, setCurrentDisplayName] = useState(null);
+  // ANTD FORM INPUT TRICKERY
+  // https://stackoverflow.com/a/61244400/8193864
+  // https://stackoverflow.com/a/62855456/8193864
 
-  const handleInputChange = (e) =>
-    setCurrentEmail({
-      ...currentEmail,
-      [e.currentTarget.name]: e.currentTarget.value,
-    });
+  const [form] = Form.useForm();
+  const [currentEmail, setCurrentEmail] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [currentDisplayName, setCurrentDisplayName] = useState("");
 
   // Check if the user is authenticated
   const history = useHistory();
@@ -29,18 +28,18 @@ const MyProfile = (props) => {
       setCurrentEmail(props.payload.providerData[0].email);
       setAvatar(props.payload.providerData[0].photoURL);
       setCurrentDisplayName(props.payload.providerData[0].displayName);
+
+      form.setFieldsValue({
+        newEmail: currentEmail,
+        displayName: currentDisplayName,
+      });
     } catch (error) {}
   });
-
-  // console.log(sex);
-
-  // https://stackoverflow.com/a/61244400/8193864
-  const [form] = Form.useForm();
 
   const onFinish = (values) => {
     props.updateUserProfile({
       displayName: values.displayName,
-      newEmail: values.newEmail,
+      newEmail: values.newEmail || currentEmail,
       oldEmail: props.payload.email,
       password: values.current_password,
       photoURL: values.photoURL,
@@ -71,12 +70,12 @@ const MyProfile = (props) => {
 
           <Col style={{ marginLeft: "10px" }} md={8}>
             <Form
-              // initialValues={{
-              //   newEmail: currentEmail,
-              // }}
               form={form}
               name="normal_login"
               className="login-form"
+              initialValues={{
+                remember: true,
+              }}
               onFinish={onFinish}
             >
               <Form.Item
@@ -100,10 +99,6 @@ const MyProfile = (props) => {
                 ]}
               >
                 <Input
-                  name="newEmail"
-                  key={`email:${(currentEmail)=>""}`}
-                  defaultValue={currentEmail}
-                  onChange={handleInputChange}
                   prefix={<UserOutlined className="site-form-item-icon" />}
                 />
               </Form.Item>
