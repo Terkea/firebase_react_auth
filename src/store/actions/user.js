@@ -148,8 +148,15 @@ export const logoutUser = () => (dispatch) => {
   dispatch(logout());
 };
 
+// The data object holds all the required attributes to perform the update
+// oldPassword, newPassword and the other fields which are less important
+// First we log in the user using his current e-mail address and the current password
+// because firebase doesn't allow us to perform some actions without a freshly logged user
+// If the data object holds a new email address we have to address that request separately
+// the other fields who came by default are dealt on the other clause
+// additionally there could be added the fields from the user profile
+// once the user is updated refreshes the localStorage instance of it
 export const updateProfile = (data) => (dispatch) => {
-  console.log(data);
   auth
     .signInWithEmailAndPassword(data.oldEmail, data.password)
     .then((res) => {
@@ -158,7 +165,6 @@ export const updateProfile = (data) => (dispatch) => {
         res.user
           .updateEmail(data.newEmail)
           .then(() => {
-            console.log("email update");
             localStorage.removeItem("authUser");
             localStorage.setItem("authUser", JSON.stringify(res.user));
             dispatch(updateProfileSuccess(res.user));
