@@ -101,7 +101,7 @@ const MyProfile = (props) => {
               >
                 <Input
                   name="newEmail"
-                  key={`newEmail:${currentEmail}`}
+                  key={`email:${(currentEmail)=>""}`}
                   defaultValue={currentEmail}
                   onChange={handleInputChange}
                   prefix={<UserOutlined className="site-form-item-icon" />}
