@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Button } from "antd";
 
-class ChangePassword extends React.Component {
+class CustomModal extends React.Component {
   state = { visible: true };
 
   showModal = () => {
@@ -33,13 +33,12 @@ class ChangePassword extends React.Component {
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
+          <p>you can do r form latter here</p>
+          <p>input box</p>
         </Modal>
       </>
     );
   }
 }
 
-export default ChangePassword;
+export default CustomModal;

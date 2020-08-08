@@ -6,7 +6,7 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import * as actions from "../store/actions/user";
-import ChangePassword from "./ChangePassword";
+// import ChangePassword from "./CustomModal";
 
 const { Title, Text } = Typography;
 
@@ -19,6 +19,7 @@ const MyProfile = (props) => {
   const [currentEmail, setCurrentEmail] = useState("");
   const [avatar, setAvatar] = useState("");
   const [currentDisplayName, setCurrentDisplayName] = useState("");
+  const [passwordModalVisibility, setPasswordModalVisibility] = useState(false);
 
   const history = useHistory();
   useEffect(() => {
@@ -59,7 +60,7 @@ const MyProfile = (props) => {
         paddingTop: "30px",
       }}
     >
-      <ChangePassword></ChangePassword>
+      {/* <ChangePassword></ChangePassword> */}
       <Col md={14} xs={24}>
         <Row align="center">
           <Avatar align="middle" size={128} icon={<UserOutlined />} />
@@ -128,11 +129,27 @@ const MyProfile = (props) => {
               </Button>
               <Button
                 style={{ marginLeft: "10px" }}
-                onClick={this.props.showModal}
+                onClick={() => {
+                  setPasswordModalVisibility(true);
+                }}
                 type="primary"
               >
                 Change password
               </Button>
+              <Modal
+                title="Basic Modal"
+                visible={passwordModalVisibility}
+                onOk={() => {
+                  console.log("Clicked submit");
+                }}
+                onCancel={() => {
+                  setPasswordModalVisibility(false);
+                  console.log("Something is fucked");
+                }}
+              >
+                <p>you can do r form latter here</p>
+                <p>input box</p>
+              </Modal>
             </Form>
             {/* error handling */}
             {props.error ? (
