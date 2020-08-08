@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Input, Form, Row, Col, Typography, Avatar, Button } from "antd";
-import { UserOutlined, PhoneOutlined, LockOutlined } from "@ant-design/icons";
+
+import { Input, Form, Row, Col, Typography, Avatar, Button, Modal } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import { connect } from "react-redux";
-import * as actions from "../store/actions/user";
 import { useHistory } from "react-router-dom";
+import * as actions from "../store/actions/user";
+import ChangePassword from "./ChangePassword";
 
 const { Title, Text } = Typography;
 
@@ -30,8 +32,8 @@ const MyProfile = (props) => {
       setCurrentEmail(props.payload.providerData[0].email);
       setAvatar(props.payload.providerData[0].photoURL);
       setCurrentDisplayName(props.payload.providerData[0].displayName);
+
       // Set up the default values for the inputs
-      
       form.setFieldsValue({
         newEmail: currentEmail,
         displayName: currentDisplayName,
@@ -57,6 +59,7 @@ const MyProfile = (props) => {
         paddingTop: "30px",
       }}
     >
+      <ChangePassword></ChangePassword>
       <Col md={14} xs={24}>
         <Row align="center">
           <Avatar align="middle" size={128} icon={<UserOutlined />} />
@@ -123,7 +126,11 @@ const MyProfile = (props) => {
               <Button type="primary" htmlType="submit">
                 Submit
               </Button>
-              <Button style={{ marginLeft: "10px" }} type="primary">
+              <Button
+                style={{ marginLeft: "10px" }}
+                onClick={this.props.showModal}
+                type="primary"
+              >
                 Change password
               </Button>
             </Form>
