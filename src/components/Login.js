@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { withRouter, useHistory } from "react-router-dom";
+import { withRouter, useHistory, Link } from "react-router-dom";
 import * as actions from "../store/actions/user";
 
-import { Row, Col, Form, Input, Button, Typography, AutoComplete } from "antd";
+import {
+  Row,
+  Col,
+  Form,
+  Input,
+  Button,
+  Typography,
+  AutoComplete,
+  Modal,
+} from "antd";
 import { LockOutlined, RocketOutlined, MailOutlined } from "@ant-design/icons";
 
 import SvgBackground from "../containers/SvgBackground";
@@ -26,6 +35,8 @@ const styles = {
 };
 
 const Login = (props) => {
+  const [modalVisibility, setModalVisibility] = useState(false);
+  const [form] = Form.useForm();
   const history = useHistory();
   // Check if the user is authenticated
   useEffect(() => {
@@ -54,12 +65,67 @@ const Login = (props) => {
     value: website,
   }));
 
+  const onOkModal = () => {
+    form.submit();
+  };
+
+  const onFinishModals = (values) => {
+    // console.log(values);
+    props.forgottenPassword(values.forgottenEmail);
+    setModalVisibility(false);
+  };
+
   const onFinish = (values) => {
     props.signInUser(values.email, values.password);
   };
 
   return (
     <SvgBackground>
+      <Modal
+        title="Change password"
+        visible={modalVisibility}
+        onOk={onOkModal}
+        onCancel={() => {
+          setModalVisibility(false);
+          console.log("Something is fucked");
+        }}
+      >
+        <LockOutlined style={styles.logo} />
+        <Text type="secondary">
+          Enter your email and we'll send you a link to get back into your
+          account.
+        </Text>
+        <Form
+          name="normal_login"
+          className="login-form"
+          initialValues={{ remember: true }}
+          onFinish={onFinishModals}
+          form={form}
+          style={{ marginTop: "20px" }}
+        >
+          <Form.Item
+            name="forgottenEmail"
+            rules={[
+              {
+                type: "email",
+                message: "The input is not valid E-mail!",
+              },
+              {
+                required: true,
+                message: "Please input your E-mail!",
+              },
+            ]}
+          >
+            <AutoComplete options={websiteOptions} onChange={onWebsiteChange}>
+              <Input
+                placeholder="Email address"
+                prefix={<MailOutlined className="site-form-item-icon" />}
+              />
+            </AutoComplete>
+          </Form.Item>
+        </Form>
+      </Modal>
+
       <Row
         type="flex"
         justify="center"
@@ -109,13 +175,18 @@ const Login = (props) => {
             </Form.Item>
 
             <Form.Item>
-              <Button
-                type="primary"
-                style={styles.loginButton}
-                htmlType="submit"
-              >
+              <Button type="primary" htmlType="submit">
                 Submit
               </Button>
+              <Link
+                to="#"
+                style={{ marginLeft: "30px" }}
+                onClick={() => {
+                  setModalVisibility(true);
+                }}
+              >
+                Forgot password?
+              </Link>
             </Form.Item>
           </Form>
 
@@ -141,6 +212,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     signInUser: (email, password) =>
       dispatch(actions.signInUser(email, password)),
+    forgottenPassword: (email) => dispatch(actions.forgottenPassword(email)),
   };
 };
 

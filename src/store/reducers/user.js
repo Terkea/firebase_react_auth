@@ -114,6 +114,8 @@ const handlers = {
   [actionTypes.UPDATE_PASSWORD_SUCCESS]: updatePasswordSuccess,
   [actionTypes.UPDATE_PASSWORD_FAIL]: updatePasswordFail,
 
+  // [actionTypes.FORGOTTEN_PASSWORD]: forgottenPassword,
+
   [actionTypes.LOGOUT]: logout,
 };
 

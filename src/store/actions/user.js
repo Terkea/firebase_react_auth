@@ -103,7 +103,6 @@ export const updatePasswordFail = (error) => {
     type: actionTypes.UPDATE_PASSWORD_FAIL,
     error: error,
     loading: false,
-    // isAuthenticated: true,
   };
 };
 
@@ -239,5 +238,16 @@ export const updatePassword = (data) => (dispatch) => {
     })
     .catch((err) => {
       dispatch(updatePasswordFail(err.message));
+    });
+};
+
+export const forgottenPassword = (email) => (dispatch) => {
+  auth
+    .sendPasswordResetEmail(email)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((error) => {
+      console.log(error);
     });
 };
