@@ -85,8 +85,8 @@ const updatePasswordFail = (state, action) => {
   return updateObject(state, {
     loading: action.loading,
     error: action.error,
-    payload: action.payload,
-    isAuthenticated: action.isAuthenticated,
+    // payload: action.payload,
+    // isAuthenticated: action.isAuthenticated,
   });
 };
 

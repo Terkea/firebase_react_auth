@@ -90,7 +90,7 @@ export const updateProfileFail = (error) => {
 
 export const updatePasswordSuccess = (user) => {
   return {
-    type: actionTypes.UPDATE_PROFILE_SUCCESS,
+    type: actionTypes.UPDATE_PASSWORD_SUCCESS,
     error: null,
     loading: false,
     payload: user,
@@ -100,12 +100,16 @@ export const updatePasswordSuccess = (user) => {
 
 export const updatePasswordFail = (error) => {
   return {
-    type: actionTypes.UPDATE_PROFILE_FAIL,
+    type: actionTypes.UPDATE_PASSWORD_FAIL,
     error: error,
     loading: false,
-    isAuthenticated: true,
+    // isAuthenticated: true,
   };
 };
+
+// IF SOME BITS FROM HERE LOOK CONFUSING
+// CHECK ON THE FIREBASE DOCS
+// https://firebase.google.com/docs/auth/web/manage-users
 
 export const registerUser = (email, password) => (dispatch) => {
   dispatch(registerStart(email));
@@ -215,24 +219,25 @@ export const updateProfile = (data) => (dispatch) => {
     });
 };
 
+// the data object contains the email and both passwords
+// firebase asks for a recently signed in user to perform update password
+// once done that dispatch the appropiate actions
 export const updatePassword = (data) => (dispatch) => {
-  console.log(data);
   auth
     .signInWithEmailAndPassword(data.email, data.currentPassword)
     .then((res) => {
       res.user
         .updatePassword(data.newPassword)
         .then((response) => {
-          console.log(response);
+          localStorage.removeItem("authUser");
+          localStorage.setItem("authUser", JSON.stringify(res.user));
+          dispatch(updatePasswordSuccess(res.user));
         })
         .catch((err) => {
-          console.log(err);
           dispatch(updatePasswordFail(err.message));
         });
-      console.log(res);
     })
     .catch((err) => {
       dispatch(updatePasswordFail(err.message));
-      console.log(err);
     });
 };

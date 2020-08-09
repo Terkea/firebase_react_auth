@@ -58,13 +58,12 @@ const MyProfile = (props) => {
   };
 
   const onFinishModals = (values) => {
-    console.log("Finish:", values);
-    setPasswordModalVisibility(false);
     props.updateUserPassword({
       email: props.payload.email,
       currentPassword: values.currentPassword,
       newPassword: values.newPassword,
     });
+    setPasswordModalVisibility(false);
   };
 
   return (
