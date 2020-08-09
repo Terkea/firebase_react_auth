@@ -16,7 +16,7 @@ import {
 import { LockOutlined, RocketOutlined, MailOutlined } from "@ant-design/icons";
 
 import SvgBackground from "../containers/SvgBackground";
-import { clearNotifications, runNotifications } from "../Helpers/Notification";
+import { runNotifications } from "../Helpers/Notification";
 
 const { Title, Text } = Typography;
 

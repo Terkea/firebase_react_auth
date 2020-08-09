@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { withRouter, Redirect, useHistory } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
 import * as actions from "../store/actions/user";
 
 import { Row, Col, Form, Input, Button, Typography, AutoComplete } from "antd";
 import { LockOutlined, RocketOutlined, MailOutlined } from "@ant-design/icons";
 
 import SvgBackground from "../containers/SvgBackground";
-import { clearNotifications, runNotifications } from "../Helpers/Notification";
+import { runNotifications } from "../Helpers/Notification";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const styles = {
   heightForTheRow: {

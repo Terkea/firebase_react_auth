@@ -1,4 +1,3 @@
-import firebase from "firebase/app";
 import * as actionTypes from "./actionTypes";
 import { auth } from "../../firebase";
 
@@ -139,7 +138,7 @@ export const signInUser = (email, password, notificationCallback) => (
     .then((data) => {
       console.log(data.user);
       dispatch(authSuccess(data.user));
-      notificationCallback(`Welcome back, ${data.user.displayName}`, "SUCCESS");
+      notificationCallback(`Welcome back ${data.user.displayName}`, "SUCCESS");
     })
     .catch((err) => {
       console.log(err);
@@ -270,5 +269,27 @@ export const forgottenPassword = (email, notificationCallback) => (
     })
     .catch((error) => {
       notificationCallback(error.message, "ERROR");
+    });
+};
+
+export const updateProfilePicture = (photoURL, notificationCallback) => (
+  dispatch
+) => {
+  const user = auth.currentUser;
+  user
+    .updateProfile({
+      // this has to change
+      // atm is hardcoded
+      // https://firebasestorage.googleapis.com/v0/b/${bucket}/o/avatar%2F${photoURL}?alt=media
+      photoURL: `https://firebasestorage.googleapis.com/v0/b/social-network-df1d6.appspot.com/o/avatar%2F${photoURL}?alt=media`,
+    })
+    .then((res) => {
+      localStorage.removeItem("authUser");
+      localStorage.setItem("authUser", JSON.stringify(user));
+      dispatch(updatePasswordSuccess(user));
+      notificationCallback("Profile picture updated", "SUCCESS");
+    })
+    .catch((err) => {
+      notificationCallback(err.message, "ERROR");
     });
 };

@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Input, Form, Row, Col, Typography, Avatar, Button, Modal } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
-import { connect } from "react-redux";
 import { useHistory, Link } from "react-router-dom";
+import { connect } from "react-redux";
 import * as actions from "../store/actions/user";
 // import ChangePassword from "./CustomModal";
-import { clearNotifications, runNotifications } from "../Helpers/Notification";
+import { runNotifications } from "../Helpers/Notification";
+import UploadProfilePicture from "./UploadProfilePicture";
 
 const { Title, Text } = Typography;
 
@@ -54,7 +55,14 @@ const MyProfile = (props) => {
         displayName: currentDisplayName,
       });
     } catch (error) {}
-  });
+  }, [
+    currentDisplayName,
+    currentEmail,
+    form,
+    history,
+    props.isAuthenticated,
+    props.payload,
+  ]);
 
   const onFinish = (values) => {
     props.updateUserProfile(
@@ -166,15 +174,21 @@ const MyProfile = (props) => {
 
       <Col md={14} xs={24}>
         <Row align="center">
-          <Avatar align="middle" size={128} icon={<UserOutlined />} />
+          <Avatar
+            align="middle"
+            src={avatar}
+            size={256}
+            icon={<UserOutlined />}
+          />
+        </Row>
+        <Row style={{ marginTop: "20px" }} align="center">
+          <UploadProfilePicture />
         </Row>
         <Title
           style={{ marginBottom: "30px", marginTop: "30px", maxHeight: "20px" }}
           align="center"
           level={4}
-        >
-          <a>Change profile photo</a>
-        </Title>
+        ></Title>
         <Row align="center">
           <Col md={4} xs={0}>
             <Title level={4}>Display name</Title>

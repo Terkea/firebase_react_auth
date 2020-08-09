@@ -17,7 +17,7 @@ import "./App.css";
 const App = (props) => {
   useEffect(() => {
     props.autoLogIn();
-  }, []);
+  }, [props]);
 
   return (
     <Router>

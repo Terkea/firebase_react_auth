@@ -1,8 +1,6 @@
 import React from "react";
 
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
-import * as actions from "../store/actions/user";
 
 const Home = (props) => {
   return (
