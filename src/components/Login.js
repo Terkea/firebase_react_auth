@@ -16,6 +16,7 @@ import {
 import { LockOutlined, RocketOutlined, MailOutlined } from "@ant-design/icons";
 
 import SvgBackground from "../containers/SvgBackground";
+import { clearNotifications, runNotifications } from "../Helpers/Notification";
 
 const { Title, Text } = Typography;
 
@@ -71,7 +72,7 @@ const Login = (props) => {
 
   const onFinishModals = (values) => {
     // console.log(values);
-    props.forgottenPassword(values.forgottenEmail);
+    props.forgottenPassword(values.forgottenEmail, runNotifications);
     setModalVisibility(false);
   };
 
@@ -212,7 +213,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     signInUser: (email, password) =>
       dispatch(actions.signInUser(email, password)),
-    forgottenPassword: (email) => dispatch(actions.forgottenPassword(email)),
+    forgottenPassword: (email, callback) =>
+      dispatch(actions.forgottenPassword(email, callback)),
   };
 };
 

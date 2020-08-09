@@ -241,13 +241,18 @@ export const updatePassword = (data) => (dispatch) => {
     });
 };
 
-export const forgottenPassword = (email) => (dispatch) => {
+export const forgottenPassword = (email, notificationCallback) => (
+  dispatch
+) => {
   auth
     .sendPasswordResetEmail(email)
     .then((res) => {
-      console.log(res);
+      notificationCallback(
+        `Thanks! Please check ${email} for a link to reset your password.`,
+        "SUCCESS"
+      );
     })
     .catch((error) => {
-      console.log(error);
+      notificationCallback(error.message, "ERROR");
     });
 };
