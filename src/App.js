@@ -11,7 +11,7 @@ import MyProfile from "./components/MyProfile";
 import { connect } from "react-redux";
 import * as actions from "./store/actions/user";
 
-import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
+import "antd/dist/antd.less"; // or 'antd/dist/antd.less'
 import "./App.css";
 
 const App = (props) => {
