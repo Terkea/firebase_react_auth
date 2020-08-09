@@ -77,7 +77,7 @@ const Login = (props) => {
   };
 
   const onFinish = (values) => {
-    props.signInUser(values.email, values.password);
+    props.signInUser(values.email, values.password, runNotifications);
   };
 
   return (
@@ -192,7 +192,7 @@ const Login = (props) => {
           </Form>
 
           {/* error handling */}
-          {props.error ? <Text type="danger">{props.error}</Text> : null}
+          {/* {props.error ? <Text type="danger">{props.error}</Text> : null} */}
         </Col>
       </Row>
     </SvgBackground>
@@ -211,8 +211,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   //
   return {
-    signInUser: (email, password) =>
-      dispatch(actions.signInUser(email, password)),
+    signInUser: (email, password, callback) =>
+      dispatch(actions.signInUser(email, password, callback)),
     forgottenPassword: (email, callback) =>
       dispatch(actions.forgottenPassword(email, callback)),
   };

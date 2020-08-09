@@ -7,6 +7,7 @@ import { Row, Col, Form, Input, Button, Typography, AutoComplete } from "antd";
 import { LockOutlined, RocketOutlined, MailOutlined } from "@ant-design/icons";
 
 import SvgBackground from "../containers/SvgBackground";
+import { clearNotifications, runNotifications } from "../Helpers/Notification";
 
 const { Title, Text } = Typography;
 
@@ -54,7 +55,7 @@ const Register = (props) => {
     value: website,
   }));
   const onFinish = (values) => {
-    props.registerUser(values.email, values.password);
+    props.registerUser(values.email, values.password, runNotifications);
   };
 
   return (
@@ -147,7 +148,7 @@ const Register = (props) => {
           </Form>
 
           {/* error handling */}
-          {props.error ? <Text type="danger">{props.error}</Text> : null}
+          {/* {props.error ? <Text type="danger">{props.error}</Text> : null} */}
         </Col>
       </Row>
     </SvgBackground>
@@ -166,8 +167,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   //
   return {
-    registerUser: (email, password) =>
-      dispatch(actions.registerUser(email, password)),
+    registerUser: (email, password, callback) =>
+      dispatch(actions.registerUser(email, password, callback)),
   };
 };
 

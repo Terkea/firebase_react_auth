@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import * as actions from "../store/actions/user";
 // import ChangePassword from "./CustomModal";
+import { clearNotifications, runNotifications } from "../Helpers/Notification";
 
 const { Title, Text } = Typography;
 
@@ -21,6 +22,14 @@ const MyProfile = (props) => {
   const [avatar, setAvatar] = useState("");
   const [currentDisplayName, setCurrentDisplayName] = useState("");
   const [passwordModalVisibility, setPasswordModalVisibility] = useState(false);
+
+  const styles = {
+    logo: {
+      fontSize: "100px",
+      width: "100%",
+      marginBottom: "30px",
+    },
+  };
 
   const history = useHistory();
   useEffect(() => {
@@ -44,13 +53,16 @@ const MyProfile = (props) => {
   });
 
   const onFinish = (values) => {
-    props.updateUserProfile({
-      displayName: values.displayName,
-      newEmail: values.newEmail || currentEmail,
-      oldEmail: props.payload.email,
-      password: values.current_password,
-      photoURL: values.photoURL,
-    });
+    props.updateUserProfile(
+      {
+        displayName: values.displayName,
+        newEmail: values.newEmail || currentEmail,
+        oldEmail: props.payload.email,
+        password: values.current_password,
+        photoURL: values.photoURL,
+      },
+      runNotifications
+    );
   };
 
   const onOkModal = () => {
@@ -58,11 +70,14 @@ const MyProfile = (props) => {
   };
 
   const onFinishModals = (values) => {
-    props.updateUserPassword({
-      email: props.payload.email,
-      currentPassword: values.currentPassword,
-      newPassword: values.newPassword,
-    });
+    props.updateUserPassword(
+      {
+        email: props.payload.email,
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
+      },
+      runNotifications
+    );
     setPasswordModalVisibility(false);
   };
 
@@ -83,7 +98,13 @@ const MyProfile = (props) => {
           console.log("Something is fucked");
         }}
       >
+        <LockOutlined style={styles.logo} />
+        <Text type="secondary">
+          If you only use words from a dictionary or a purely numeric password,
+          a hacker only has to try a limited list of possibilities.
+        </Text>
         <Form
+          style={{ marginTop: "20px" }}
           name="normal_login"
           className="login-form"
           initialValues={{ remember: true }}
@@ -92,6 +113,7 @@ const MyProfile = (props) => {
         >
           <Form.Item
             name="currentPassword"
+            label="Current password"
             rules={[
               {
                 required: true,
@@ -102,10 +124,10 @@ const MyProfile = (props) => {
             <Input
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
-              placeholder="Current password"
             />
           </Form.Item>
           <Form.Item
+            label="New password"
             name="newPassword"
             rules={[
               { required: true, message: "Please input the new password!" },
@@ -114,11 +136,11 @@ const MyProfile = (props) => {
             <Input
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
-              placeholder="New password"
             />
           </Form.Item>
           <Form.Item
             name="newPasswordConfirm"
+            label="New password confirm"
             rules={[
               {
                 required: true,
@@ -139,7 +161,6 @@ const MyProfile = (props) => {
             <Input
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
-              placeholder="New password confirm"
             />
           </Form.Item>
         </Form>
@@ -222,11 +243,11 @@ const MyProfile = (props) => {
               </Button>
             </Form>
             {/* error handling */}
-            {props.error ? (
+            {/* {props.error ? (
               <Text type="danger" style={{ marginTop: "20px" }}>
                 {props.error}
               </Text>
-            ) : null}
+            ) : null} */}
           </Col>
         </Row>
       </Col>
@@ -244,8 +265,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateUserProfile: (data) => dispatch(actions.updateProfile(data)),
-    updateUserPassword: (data) => dispatch(actions.updatePassword(data)),
+    updateUserProfile: (data, callback) =>
+      dispatch(actions.updateProfile(data, callback)),
+    updateUserPassword: (data, callback) =>
+      dispatch(actions.updatePassword(data, callback)),
   };
 };
 

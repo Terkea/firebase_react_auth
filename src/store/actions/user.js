@@ -110,7 +110,9 @@ export const updatePasswordFail = (error) => {
 // CHECK ON THE FIREBASE DOCS
 // https://firebase.google.com/docs/auth/web/manage-users
 
-export const registerUser = (email, password) => (dispatch) => {
+export const registerUser = (email, password, notificationCallback) => (
+  dispatch
+) => {
   dispatch(registerStart(email));
 
   auth
@@ -118,14 +120,18 @@ export const registerUser = (email, password) => (dispatch) => {
     .then((data) => {
       console.log(data);
       dispatch(registerSuccess(data));
+      notificationCallback("Account successfully created", "SUCCESS");
     })
     .catch((err) => {
       console.log(err.message);
       dispatch(registerFail(err.message));
+      notificationCallback(err.message, "ERROR");
     });
 };
 
-export const signInUser = (email, password) => (dispatch) => {
+export const signInUser = (email, password, notificationCallback) => (
+  dispatch
+) => {
   dispatch(authStart(email));
 
   auth
@@ -133,10 +139,12 @@ export const signInUser = (email, password) => (dispatch) => {
     .then((data) => {
       console.log(data.user);
       dispatch(authSuccess(data.user));
+      notificationCallback(`Welcome back, ${data.user.displayName}`, "SUCCESS");
     })
     .catch((err) => {
       console.log(err);
       dispatch(authFail(err.message));
+      notificationCallback(err.message, "ERROR");
     });
 };
 
@@ -178,7 +186,7 @@ export const logoutUser = () => (dispatch) => {
 // the other fields who came by default are dealt on the other clause
 // additionally there could be added the fields from the user profile
 // once the user is updated refreshes the localStorage instance of it
-export const updateProfile = (data) => (dispatch) => {
+export const updateProfile = (data, notificationCallback) => (dispatch) => {
   auth
     .signInWithEmailAndPassword(data.oldEmail, data.password)
     .then((res) => {
@@ -190,10 +198,12 @@ export const updateProfile = (data) => (dispatch) => {
             localStorage.removeItem("authUser");
             localStorage.setItem("authUser", JSON.stringify(res.user));
             dispatch(updateProfileSuccess(res.user));
+            notificationCallback("Profile updated", "SUCCESS");
           })
           .catch((err) => {
             console.log(err);
             dispatch(updateProfileFail(err.message));
+            notificationCallback(err.message, "ERROR");
           });
 
         res.user
@@ -205,23 +215,26 @@ export const updateProfile = (data) => (dispatch) => {
             localStorage.removeItem("authUser");
             localStorage.setItem("authUser", JSON.stringify(res.user));
             dispatch(updateProfileSuccess(res.user));
+            notificationCallback("Profile updated", "SUCCESS");
           })
           .catch((err) => {
             console.log(err);
             dispatch(updateProfileFail(err.message));
+            notificationCallback(err.message, "ERROR");
           });
       }
     })
     .catch((err) => {
       console.log("EROARE LOGIN", err);
       dispatch(updateProfileFail(err.message));
+      notificationCallback(err.message, "ERROR");
     });
 };
 
 // the data object contains the email and both passwords
 // firebase asks for a recently signed in user to perform update password
 // once done that dispatch the appropiate actions
-export const updatePassword = (data) => (dispatch) => {
+export const updatePassword = (data, notificationCallback) => (dispatch) => {
   auth
     .signInWithEmailAndPassword(data.email, data.currentPassword)
     .then((res) => {
@@ -231,13 +244,16 @@ export const updatePassword = (data) => (dispatch) => {
           localStorage.removeItem("authUser");
           localStorage.setItem("authUser", JSON.stringify(res.user));
           dispatch(updatePasswordSuccess(res.user));
+          notificationCallback("Password updated", "SUCCESS");
         })
         .catch((err) => {
           dispatch(updatePasswordFail(err.message));
+          notificationCallback(err.message, "ERROR");
         });
     })
     .catch((err) => {
       dispatch(updatePasswordFail(err.message));
+      notificationCallback(err.message, "ERROR");
     });
 };
 
