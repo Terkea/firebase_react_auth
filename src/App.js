@@ -15,9 +15,11 @@ import "antd/dist/antd.less"; // or 'antd/dist/antd.less'
 import "./App.css";
 
 const App = (props) => {
+  // https://stackoverflow.com/a/55700912/8193864
+  const { autoLogIn } = props;
   useEffect(() => {
-    props.autoLogIn();
-  }, [props]);
+    autoLogIn();
+  }, [autoLogIn]);
 
   return (
     <Router>
