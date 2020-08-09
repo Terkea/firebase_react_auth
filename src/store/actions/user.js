@@ -88,6 +88,25 @@ export const updateProfileFail = (error) => {
   };
 };
 
+export const updatePasswordSuccess = (user) => {
+  return {
+    type: actionTypes.UPDATE_PROFILE_SUCCESS,
+    error: null,
+    loading: false,
+    payload: user,
+    isAuthenticated: true,
+  };
+};
+
+export const updatePasswordFail = (error) => {
+  return {
+    type: actionTypes.UPDATE_PROFILE_FAIL,
+    error: error,
+    loading: false,
+    isAuthenticated: true,
+  };
+};
+
 export const registerUser = (email, password) => (dispatch) => {
   dispatch(registerStart(email));
 
@@ -193,5 +212,27 @@ export const updateProfile = (data) => (dispatch) => {
     .catch((err) => {
       console.log("EROARE LOGIN", err);
       dispatch(updateProfileFail(err.message));
+    });
+};
+
+export const updatePassword = (data) => (dispatch) => {
+  console.log(data);
+  auth
+    .signInWithEmailAndPassword(data.email, data.currentPassword)
+    .then((res) => {
+      res.user
+        .updatePassword(data.newPassword)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((err) => {
+          console.log(err);
+          dispatch(updatePasswordFail(err.message));
+        });
+      console.log(res);
+    })
+    .catch((err) => {
+      dispatch(updatePasswordFail(err.message));
+      console.log(err);
     });
 };

@@ -16,6 +16,7 @@ const MyProfile = (props) => {
   // https://stackoverflow.com/a/62855456/8193864
 
   const [form] = Form.useForm();
+  const [form2] = Form.useForm();
   const [currentEmail, setCurrentEmail] = useState("");
   const [avatar, setAvatar] = useState("");
   const [currentDisplayName, setCurrentDisplayName] = useState("");
@@ -52,6 +53,20 @@ const MyProfile = (props) => {
     });
   };
 
+  const onOkModal = () => {
+    form2.submit();
+  };
+
+  const onFinishModals = (values) => {
+    console.log("Finish:", values);
+    setPasswordModalVisibility(false);
+    props.updateUserPassword({
+      email: props.payload.email,
+      currentPassword: values.currentPassword,
+      newPassword: values.newPassword,
+    });
+  };
+
   return (
     <Row
       justify="center"
@@ -60,7 +75,77 @@ const MyProfile = (props) => {
         paddingTop: "30px",
       }}
     >
-      {/* <ChangePassword></ChangePassword> */}
+      <Modal
+        title="Change password"
+        visible={passwordModalVisibility}
+        onOk={onOkModal}
+        onCancel={() => {
+          setPasswordModalVisibility(false);
+          console.log("Something is fucked");
+        }}
+      >
+        <Form
+          name="normal_login"
+          className="login-form"
+          initialValues={{ remember: true }}
+          onFinish={onFinishModals}
+          form={form2}
+        >
+          <Form.Item
+            name="currentPassword"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Current password!",
+              },
+            ]}
+          >
+            <Input
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              placeholder="Current password"
+            />
+          </Form.Item>
+          <Form.Item
+            name="newPassword"
+            rules={[
+              { required: true, message: "Please input the new password!" },
+            ]}
+          >
+            <Input
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              placeholder="New password"
+            />
+          </Form.Item>
+          <Form.Item
+            name="newPasswordConfirm"
+            rules={[
+              {
+                required: true,
+                message: "Please confirm your password!",
+              },
+              ({ getFieldValue }) => ({
+                validator(rule, value) {
+                  if (!value || getFieldValue("newPassword") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    "The two passwords that you entered do not match!"
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              placeholder="New password confirm"
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+
       <Col md={14} xs={24}>
         <Row align="center">
           <Avatar align="middle" size={128} icon={<UserOutlined />} />
@@ -136,20 +221,6 @@ const MyProfile = (props) => {
               >
                 Change password
               </Button>
-              <Modal
-                title="Basic Modal"
-                visible={passwordModalVisibility}
-                onOk={() => {
-                  console.log("Clicked submit");
-                }}
-                onCancel={() => {
-                  setPasswordModalVisibility(false);
-                  console.log("Something is fucked");
-                }}
-              >
-                <p>you can do r form latter here</p>
-                <p>input box</p>
-              </Modal>
             </Form>
             {/* error handling */}
             {props.error ? (
@@ -174,8 +245,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateUserProfile: (user, data) =>
-      dispatch(actions.updateProfile(user, data)),
+    updateUserProfile: (data) => dispatch(actions.updateProfile(data)),
+    updateUserPassword: (data) => dispatch(actions.updatePassword(data)),
   };
 };
 

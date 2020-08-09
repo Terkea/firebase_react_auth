@@ -72,6 +72,24 @@ const updateProfileFail = (state, action) => {
   });
 };
 
+const updatePasswordSuccess = (state, action) => {
+  return updateObject(state, {
+    loading: action.loading,
+    error: action.error,
+    payload: action.payload,
+    isAuthenticated: action.isAuthenticated,
+  });
+};
+
+const updatePasswordFail = (state, action) => {
+  return updateObject(state, {
+    loading: action.loading,
+    error: action.error,
+    payload: action.payload,
+    isAuthenticated: action.isAuthenticated,
+  });
+};
+
 const logout = (state, action) => {
   return updateObject(state, {
     loading: action.loading,
@@ -92,6 +110,9 @@ const handlers = {
 
   [actionTypes.UPDATE_PROFILE_SUCCESS]: updateProfileSuccess,
   [actionTypes.UPDATE_PROFILE_FAIL]: updateProfileFail,
+
+  [actionTypes.UPDATE_PASSWORD_SUCCESS]: updatePasswordSuccess,
+  [actionTypes.UPDATE_PASSWORD_FAIL]: updatePasswordFail,
 
   [actionTypes.LOGOUT]: logout,
 };
