@@ -7,7 +7,7 @@ import { useHistory, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import * as actions from "../store/actions/user";
 // import ChangePassword from "./CustomModal";
-import { runNotifications } from "../Helpers/Notification";
+import { runNotifications } from "../helpers/Notification";
 import UploadProfilePicture from "./UploadProfilePicture";
 
 const { Title, Text } = Typography;

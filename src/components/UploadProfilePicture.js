@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Upload, Typography } from "antd";
 import ImgCrop from "antd-img-crop";
 
-import { runNotifications } from "../Helpers/Notification";
+import { runNotifications } from "../helpers/Notification";
 
 import uuid from "react-uuid";
 import { storage } from "../firebase";

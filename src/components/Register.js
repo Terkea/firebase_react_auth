@@ -7,7 +7,7 @@ import { Row, Col, Form, Input, Button, Typography, AutoComplete } from "antd";
 import { LockOutlined, RocketOutlined, MailOutlined } from "@ant-design/icons";
 
 import SvgBackground from "../containers/SvgBackground";
-import { runNotifications } from "../Helpers/Notification";
+import { runNotifications } from "../helpers/Notification";
 
 const { Title } = Typography;
 

@@ -1,20 +1,19 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
-import 'firebase/storage'
+import "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD27sZeLwhaUJmNMMA2MpED93zg2YHIeHo",
-  authDomain: "social-network-df1d6.firebaseapp.com",
-  databaseURL: "https://social-network-df1d6.firebaseio.com",
-  projectId: "social-network-df1d6",
-  storageBucket: "social-network-df1d6.appspot.com",
-  messagingSenderId: "1097226061811",
-  appId: "1:1097226061811:web:087db3dcfed03d356eb486",
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_DATABASE_URL,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
 };
 
 firebase.initializeApp(firebaseConfig);
 
 export const auth = firebase.auth();
-export const storage = firebase.storage()
+export const storage = firebase.storage();
 export const firestore = firebase.firestore();
