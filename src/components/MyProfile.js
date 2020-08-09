@@ -4,7 +4,7 @@ import { Input, Form, Row, Col, Typography, Avatar, Button, Modal } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import { connect } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import * as actions from "../store/actions/user";
 // import ChangePassword from "./CustomModal";
 import { clearNotifications, runNotifications } from "../Helpers/Notification";
@@ -28,6 +28,10 @@ const MyProfile = (props) => {
       fontSize: "100px",
       width: "100%",
       marginBottom: "30px",
+    },
+    mainRow: {
+      height: "50vh",
+      paddingTop: "30px",
     },
   };
 
@@ -82,13 +86,7 @@ const MyProfile = (props) => {
   };
 
   return (
-    <Row
-      justify="center"
-      style={{
-        height: "50vh",
-        paddingTop: "30px",
-      }}
-    >
+    <Row justify="center" style={styles.mainRow}>
       <Modal
         title="Change password"
         visible={passwordModalVisibility}
@@ -170,7 +168,11 @@ const MyProfile = (props) => {
         <Row align="center">
           <Avatar align="middle" size={128} icon={<UserOutlined />} />
         </Row>
-        <Title style={{ marginBottom: "30px" }} align="center" level={4}>
+        <Title
+          style={{ marginBottom: "30px", marginTop: "30px", maxHeight: "20px" }}
+          align="center"
+          level={4}
+        >
           <a>Change profile photo</a>
         </Title>
         <Row align="center">
@@ -229,25 +231,30 @@ const MyProfile = (props) => {
                 />
               </Form.Item>
 
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-              <Button
-                style={{ marginLeft: "10px" }}
-                onClick={() => {
-                  setPasswordModalVisibility(true);
-                }}
-                type="primary"
-              >
-                Change password
-              </Button>
+              <Row align="middle">
+                <Col span={12}>
+                  <Button
+                    // style={{ width: "98%" }}
+                    type="primary"
+                    htmlType="submit"
+                  >
+                    Update profile
+                  </Button>
+                </Col>
+                <Col span={12} align="end">
+                  <Link
+                    to="#"
+                    // style={{ marginLeft: "10px", width: "100%" }}
+                    onClick={() => {
+                      setPasswordModalVisibility(true);
+                    }}
+                    type="primary"
+                  >
+                    Change password
+                  </Link>
+                </Col>
+              </Row>
             </Form>
-            {/* error handling */}
-            {/* {props.error ? (
-              <Text type="danger" style={{ marginTop: "20px" }}>
-                {props.error}
-              </Text>
-            ) : null} */}
           </Col>
         </Row>
       </Col>
