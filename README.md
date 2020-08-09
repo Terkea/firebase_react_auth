@@ -18,6 +18,18 @@ The goal of this project is to be just that, a solid modern project template tha
 
 To install it with docker, you only need to run the following command:
 
+#### dev port 3000
+
+```
+docker-compose up -d --build
+```
+
+#### prod port 80
+
+```
+docker-compose -f docker-compose.prod.yaml up -d --build
+```
+
 ## Option 2
 
 ### > **React**
