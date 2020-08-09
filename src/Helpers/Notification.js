@@ -32,6 +32,20 @@ export const runNotifications = (notificationMessage = "", outcome = "") => {
                 icon: <CheckCircleOutlined style={{ color: "green" }} />
             }
             break;
+        case "INFO":
+            notificationProps = {
+                message: "Info",
+                duration: 10,
+                icon: <CheckCircleOutlined style={{ color: "blue" }} />
+            }
+            break;
+        case "WARNING":
+            notificationProps = {
+                message: "Warning",
+                duration: 10,
+                icon: <CheckCircleOutlined style={{ color: "yellow" }} />
+            }
+            break;
         case "ERROR":
             notificationProps = {
                 message: "Error",
