@@ -128,12 +128,16 @@ export const registerUser = (email, password, notificationCallback) => (
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            data.userProfile = doc.data();
+            // data.userProfile = { docId: doc.id, data: doc.data() };
+            dispatch(
+              registerSuccess({
+                user: data.user,
+                userProfile: { docId: doc.id, data: doc.data() },
+              })
+            );
+            notificationCallback("Account successfully created", "SUCCESS");
           });
         });
-
-      dispatch(registerSuccess(data));
-      notificationCallback("Account successfully created", "SUCCESS");
     })
     .catch((err) => {
       dispatch(registerFail(err.message));
@@ -157,7 +161,12 @@ export const signInUser = (email, password, notificationCallback) => (
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            dispatch(authSuccess({ user: data.user, userProfile: doc.data() }));
+            dispatch(
+              authSuccess({
+                user: data.user,
+                userProfile: { docId: doc.id, data: doc.data() },
+              })
+            );
             notificationCallback(
               `Welcome back ${data.user.displayName}`,
               "SUCCESS"
@@ -194,9 +203,17 @@ export const autoLogin = () => (dispatch) => {
             querySnapshot.forEach((doc) => {
               localStorage.setItem(
                 "authUser",
-                JSON.stringify({ user: user, userProfile: doc.data() })
+                JSON.stringify({
+                  user: user,
+                  userProfile: { docId: doc.id, data: doc.data() },
+                })
               );
-              dispatch(authSuccess({ user: user, userProfile: doc.data() }));
+              dispatch(
+                authSuccess({
+                  user: user,
+                  userProfile: { docId: doc.id, data: doc.data() },
+                })
+              );
             });
           });
       } else {
@@ -241,12 +258,15 @@ export const updateProfile = (data, notificationCallback) => (dispatch) => {
                   localStorage.removeItem("authUser");
                   localStorage.setItem(
                     "authUser",
-                    JSON.stringify({ user: res.user, userProfile: doc.data() })
+                    JSON.stringify({
+                      user: res.user,
+                      userProfile: { docId: doc.id, data: doc.data() },
+                    })
                   );
                   dispatch(
                     updateProfileSuccess({
                       user: res.user,
-                      userProfile: doc.data(),
+                      userProfile: { docId: doc.id, data: doc.data() },
                     })
                   );
                   notificationCallback("Profile updated", "SUCCESS");
@@ -254,7 +274,6 @@ export const updateProfile = (data, notificationCallback) => (dispatch) => {
               });
           })
           .catch((err) => {
-            console.log(err);
             dispatch(updateProfileFail(err.message));
             notificationCallback(err.message, "ERROR");
           });
@@ -265,6 +284,16 @@ export const updateProfile = (data, notificationCallback) => (dispatch) => {
             photoURL: data.photoURL,
           })
           .then(() => {
+            try {
+              firestore.collection("userProfile").doc(data.docId).set(
+                {
+                  // CUSTOM PROFILE
+                  bio: data.bio,
+                },
+                { merge: true }
+              );
+            } catch {}
+
             firestore
               .collection("userProfile")
               .where("uid", "==", res.user.uid)
@@ -275,12 +304,15 @@ export const updateProfile = (data, notificationCallback) => (dispatch) => {
                   localStorage.removeItem("authUser");
                   localStorage.setItem(
                     "authUser",
-                    JSON.stringify({ user: res.user, userProfile: doc.data() })
+                    JSON.stringify({
+                      user: res.user,
+                      userProfile: { docId: doc.id, data: doc.data() },
+                    })
                   );
                   dispatch(
                     updateProfileSuccess({
                       user: res.user,
-                      userProfile: doc.data(),
+                      userProfile: { docId: doc.id, data: doc.data() },
                     })
                   );
                   notificationCallback("Profile updated", "SUCCESS");
@@ -319,12 +351,15 @@ export const updatePassword = (data, notificationCallback) => (dispatch) => {
                 localStorage.removeItem("authUser");
                 localStorage.setItem(
                   "authUser",
-                  JSON.stringify({ user: res.user, userProfile: doc.data() })
+                  JSON.stringify({
+                    user: res.user,
+                    userProfile: { docId: doc.id, data: doc.data() },
+                  })
                 );
                 dispatch(
-                  updateProfileSuccess({
+                  updatePasswordSuccess({
                     user: res.user,
-                    userProfile: doc.data(),
+                    userProfile: { docId: doc.id, data: doc.data() },
                   })
                 );
                 notificationCallback("Password updated", "SUCCESS");
@@ -377,12 +412,15 @@ export const updateProfilePicture = (photoURL, notificationCallback) => (
             localStorage.removeItem("authUser");
             localStorage.setItem(
               "authUser",
-              JSON.stringify({ user: user, userProfile: doc.data() })
+              JSON.stringify({
+                user: user,
+                userProfile: { docId: doc.id, data: doc.data() },
+              })
             );
             dispatch(
               updateProfileSuccess({
                 user: user,
-                userProfile: doc.data(),
+                userProfile: { docId: doc.id, data: doc.data() },
               })
             );
             notificationCallback("Profile picture updated", "SUCCESS");

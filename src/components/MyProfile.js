@@ -11,6 +11,7 @@ import { runNotifications } from "../helpers/Notification";
 import UploadProfilePicture from "./UploadProfilePicture";
 
 const { Title, Text } = Typography;
+const { TextArea } = Input;
 
 const MyProfile = (props) => {
   // ANTD FORM INPUT TRICKERY
@@ -22,6 +23,7 @@ const MyProfile = (props) => {
   const [currentEmail, setCurrentEmail] = useState("");
   const [avatar, setAvatar] = useState("");
   const [currentDisplayName, setCurrentDisplayName] = useState("");
+  const [bio, setBio] = useState("");
   const [passwordModalVisibility, setPasswordModalVisibility] = useState(false);
 
   const styles = {
@@ -48,11 +50,15 @@ const MyProfile = (props) => {
       setCurrentEmail(props.payload.user.providerData[0].email);
       setAvatar(props.payload.user.providerData[0].photoURL);
       setCurrentDisplayName(props.payload.user.providerData[0].displayName);
+      setBio(props.payload.userProfile.data.bio);
+
+      // console.log(props.payload.userProfile.bio);
 
       // Set up the default values for the inputs
       form.setFieldsValue({
         newEmail: currentEmail,
         displayName: currentDisplayName,
+        bio: bio,
       });
     } catch (error) {}
   }, [
@@ -62,6 +68,7 @@ const MyProfile = (props) => {
     history,
     props.isAuthenticated,
     props.payload,
+    bio,
   ]);
 
   const onFinish = (values) => {
@@ -72,6 +79,8 @@ const MyProfile = (props) => {
         oldEmail: props.payload.user.email,
         password: values.current_password,
         photoURL: values.photoURL,
+        bio: values.bio,
+        docId: props.payload.userProfile.docId,
       },
       runNotifications
     );
@@ -194,6 +203,7 @@ const MyProfile = (props) => {
             <Title level={4}>Display name</Title>
             <Title level={4}>E-mail</Title>
             <Title level={4}>Current password</Title>
+            <Title level={4}>Bio</Title>
           </Col>
 
           <Col style={{ marginLeft: "10px" }} md={8}>
@@ -245,13 +255,21 @@ const MyProfile = (props) => {
                 />
               </Form.Item>
 
+              <Form.Item
+                name="bio"
+                rules={[
+                  {
+                    required: false,
+                    message: "Please input your bio!",
+                  },
+                ]}
+              >
+                <TextArea autoSize={{ minRows: 2, maxRows: 2 }} />
+              </Form.Item>
+
               <Row align="middle">
                 <Col span={12}>
-                  <Button
-                    // style={{ width: "98%" }}
-                    type="primary"
-                    htmlType="submit"
-                  >
+                  <Button type="primary" htmlType="submit">
                     Update profile
                   </Button>
                 </Col>

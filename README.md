@@ -6,6 +6,7 @@ The goal of this project is to be just that, a solid modern project template tha
 
 - [Firebase Authentication](https://firebase.google.com/docs/auth)
 - [Firebase Storage](https://firebase.google.com/docs/storage)
+- [Firebase Firestore](https://firebase.google.com/docs/firestore)
 - [Ant Design](https://ant.design)
 - Redux
 - Dockerfile
@@ -59,8 +60,6 @@ service firebase.storage {
 ```
 
 # Documentation
-
-## > **React**
 
 ## Introduction
 
@@ -116,6 +115,24 @@ When the user is logged in the store looks the following:
   - loading - is a boolean that can used, for example, in the conditional rendering of elements, this is used in [Login](./react/src/components/Login.js) and [My Profile](./react/src/components/MyProfile/index.js).
   - error - is a boolen, that can be used, for example, to set a given element to show that it errored out, such as an icon.
   - email - note that email is moved inside profile once the user has logged in.
+
+## Custom user profile
+
+By default when a user is registered a document is created with his uid.
+You can add as many custom attributes as you wish.
+user.js
+
+```jsx
+try {
+  firestore.collection("userProfile").doc(data.docId).set(
+    {
+      // CUSTOM PROFILE
+      bio: data.bio,
+    },
+    { merge: true }
+  );
+} catch {}
+```
 
 ## My Profile
 
