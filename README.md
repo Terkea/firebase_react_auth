@@ -1,3 +1,5 @@
+DEMO: https://fir-react-auth-35f83.firebaseapp.com/
+
 # Motivation
 
 When starting a new project it can be incredibly time consuming to reach the milestone that will finally let you start implementing your ideas, and doing actual work.
@@ -54,6 +56,19 @@ service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
       allow read, write: if true;
+    }
+  }
+}
+```
+
+database rules
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write;
     }
   }
 }

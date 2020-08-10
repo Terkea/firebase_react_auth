@@ -6,7 +6,7 @@ const Home = (props) => {
   return (
     <div>
       {props.payload ? (
-        <b>Hi, {props.payload.email}</b>
+        <b>Hi {props.payload.user.email}</b>
       ) : (
         "Never seen you before"
       )}

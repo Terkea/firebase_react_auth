@@ -68,7 +68,7 @@ const updateProfileFail = (state, action) => {
   return updateObject(state, {
     loading: action.loading,
     error: action.error,
-    payload: action.payload,
+    // payload: action.payload,
     isAuthenticated: action.isAuthenticated,
   });
 };
