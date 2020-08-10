@@ -1,6 +1,7 @@
 import React from "react";
 
 import { connect } from "react-redux";
+import { firestore } from "../firebase";
 
 const Home = (props) => {
   return (

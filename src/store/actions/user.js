@@ -118,7 +118,20 @@ export const registerUser = (email, password, notificationCallback) => (
   auth
     .createUserWithEmailAndPassword(email, password)
     .then((data) => {
+      // create the user profile
       firestore.collection("userProfile").add({ uid: data.user.uid });
+      // append the profile to the user object
+      firestore
+        .collection("userProfile")
+        .where("uid", "==", data.user.uid)
+        .limit(1)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            data.userProfile = doc.data();
+          });
+        });
+
       dispatch(registerSuccess(data));
       notificationCallback("Account successfully created", "SUCCESS");
     })
@@ -136,10 +149,21 @@ export const signInUser = (email, password, notificationCallback) => (
   auth
     .signInWithEmailAndPassword(email, password)
     .then((data) => {
-      console.log(data.user);
-      dispatch(authSuccess(data.user));
-      notificationCallback(`Welcome back ${data.user.displayName}`, "SUCCESS");
-      // Add a second document with a generated ID.
+      // append the profile to the user object
+      firestore
+        .collection("userProfile")
+        .where("uid", "==", data.user.uid)
+        .limit(1)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            dispatch(authSuccess({ user: data.user, userProfile: doc.data() }));
+            notificationCallback(
+              `Welcome back ${data.user.displayName}`,
+              "SUCCESS"
+            );
+          });
+        });
     })
     .catch((err) => {
       console.log(err);
@@ -161,8 +185,20 @@ export const autoLogin = () => (dispatch) => {
   } else {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        localStorage.setItem("authUser", JSON.stringify(user));
-        dispatch(authSuccess(user));
+        firestore
+          .collection("userProfile")
+          .where("uid", "==", user.uid)
+          .limit(1)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              localStorage.setItem(
+                "authUser",
+                JSON.stringify({ user: user, userProfile: doc.data() })
+              );
+              dispatch(authSuccess({ user: user, userProfile: doc.data() }));
+            });
+          });
       } else {
         dispatch(logoutUser);
       }
@@ -195,10 +231,27 @@ export const updateProfile = (data, notificationCallback) => (dispatch) => {
         res.user
           .updateEmail(data.newEmail)
           .then(() => {
-            localStorage.removeItem("authUser");
-            localStorage.setItem("authUser", JSON.stringify(res.user));
-            dispatch(updateProfileSuccess(res.user));
-            notificationCallback("Profile updated", "SUCCESS");
+            firestore
+              .collection("userProfile")
+              .where("uid", "==", res.user.uid)
+              .limit(1)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  localStorage.removeItem("authUser");
+                  localStorage.setItem(
+                    "authUser",
+                    JSON.stringify({ user: res.user, userProfile: doc.data() })
+                  );
+                  dispatch(
+                    updateProfileSuccess({
+                      user: res.user,
+                      userProfile: doc.data(),
+                    })
+                  );
+                  notificationCallback("Profile updated", "SUCCESS");
+                });
+              });
           })
           .catch((err) => {
             console.log(err);
@@ -212,20 +265,35 @@ export const updateProfile = (data, notificationCallback) => (dispatch) => {
             photoURL: data.photoURL,
           })
           .then(() => {
-            localStorage.removeItem("authUser");
-            localStorage.setItem("authUser", JSON.stringify(res.user));
-            dispatch(updateProfileSuccess(res.user));
-            notificationCallback("Profile updated", "SUCCESS");
+            firestore
+              .collection("userProfile")
+              .where("uid", "==", res.user.uid)
+              .limit(1)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  localStorage.removeItem("authUser");
+                  localStorage.setItem(
+                    "authUser",
+                    JSON.stringify({ user: res.user, userProfile: doc.data() })
+                  );
+                  dispatch(
+                    updateProfileSuccess({
+                      user: res.user,
+                      userProfile: doc.data(),
+                    })
+                  );
+                  notificationCallback("Profile updated", "SUCCESS");
+                });
+              });
           })
           .catch((err) => {
-            console.log(err);
             dispatch(updateProfileFail(err.message));
             notificationCallback(err.message, "ERROR");
           });
       }
     })
     .catch((err) => {
-      console.log("EROARE LOGIN", err);
       dispatch(updateProfileFail(err.message));
       notificationCallback(err.message, "ERROR");
     });
@@ -241,10 +309,27 @@ export const updatePassword = (data, notificationCallback) => (dispatch) => {
       res.user
         .updatePassword(data.newPassword)
         .then((response) => {
-          localStorage.removeItem("authUser");
-          localStorage.setItem("authUser", JSON.stringify(res.user));
-          dispatch(updatePasswordSuccess(res.user));
-          notificationCallback("Password updated", "SUCCESS");
+          firestore
+            .collection("userProfile")
+            .where("uid", "==", res.user.uid)
+            .limit(1)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                localStorage.removeItem("authUser");
+                localStorage.setItem(
+                  "authUser",
+                  JSON.stringify({ user: res.user, userProfile: doc.data() })
+                );
+                dispatch(
+                  updateProfileSuccess({
+                    user: res.user,
+                    userProfile: doc.data(),
+                  })
+                );
+                notificationCallback("Password updated", "SUCCESS");
+              });
+            });
         })
         .catch((err) => {
           dispatch(updatePasswordFail(err.message));
@@ -282,31 +367,29 @@ export const updateProfilePicture = (photoURL, notificationCallback) => (
       photoURL: `https://firebasestorage.googleapis.com/v0/b/${process.env.REACT_APP_STORAGE_BUCKET}/o/avatar%2F${photoURL}?alt=media`,
     })
     .then((res) => {
-      localStorage.removeItem("authUser");
-      localStorage.setItem("authUser", JSON.stringify(user));
-      dispatch(updatePasswordSuccess(user));
-      notificationCallback("Profile picture updated", "SUCCESS");
+      firestore
+        .collection("userProfile")
+        .where("uid", "==", user.uid)
+        .limit(1)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            localStorage.removeItem("authUser");
+            localStorage.setItem(
+              "authUser",
+              JSON.stringify({ user: user, userProfile: doc.data() })
+            );
+            dispatch(
+              updateProfileSuccess({
+                user: user,
+                userProfile: doc.data(),
+              })
+            );
+            notificationCallback("Profile picture updated", "SUCCESS");
+          });
+        });
     })
     .catch((err) => {
       notificationCallback(err.message, "ERROR");
     });
 };
-
-// export const test = () => {
-//   // console.log("click");
-//   firestore
-//     .collection("users")
-//     .doc("test")
-//     .set({
-//       first: "Alan",
-//       middle: "Mathison",
-//       last: "Turing",
-//       born: 1912,
-//     })
-//     .then(function (docRef) {
-//       console.log("Document written with ID: ", docRef);
-//     })
-//     .catch(function (error) {
-//       console.error("Error adding document: ", error);
-//     });
-// };

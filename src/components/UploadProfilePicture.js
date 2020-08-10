@@ -25,7 +25,6 @@ const UploadProfilePicture = (props) => {
     try {
       const image = imgFile.put(file, metadata);
       onSuccess(null, image);
-      console.log(image);
       props.updateProfilePicture(`${imageName}.jpg`, runNotifications);
     } catch (e) {
       onError(e);

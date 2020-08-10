@@ -19,7 +19,7 @@ const registerSuccess = (state, action) => {
     loading: action.loading,
     error: action.error,
     payload: action.payload,
-    isAuthenticated: action.payload,
+    isAuthenticated: action.isAuthenticated,
   });
 };
 

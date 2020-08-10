@@ -45,9 +45,9 @@ const MyProfile = (props) => {
 
     // Assign the values with hooks since without it'd crash cuz the app is initialized with a null payload
     try {
-      setCurrentEmail(props.payload.providerData[0].email);
-      setAvatar(props.payload.providerData[0].photoURL);
-      setCurrentDisplayName(props.payload.providerData[0].displayName);
+      setCurrentEmail(props.payload.user.providerData[0].email);
+      setAvatar(props.payload.user.providerData[0].photoURL);
+      setCurrentDisplayName(props.payload.user.providerData[0].displayName);
 
       // Set up the default values for the inputs
       form.setFieldsValue({
@@ -69,7 +69,7 @@ const MyProfile = (props) => {
       {
         displayName: values.displayName,
         newEmail: values.newEmail || currentEmail,
-        oldEmail: props.payload.email,
+        oldEmail: props.payload.user.email,
         password: values.current_password,
         photoURL: values.photoURL,
       },
@@ -84,7 +84,7 @@ const MyProfile = (props) => {
   const onFinishModals = (values) => {
     props.updateUserPassword(
       {
-        email: props.payload.email,
+        email: props.payload.user.email,
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
       },
