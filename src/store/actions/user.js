@@ -1,5 +1,5 @@
 import * as actionTypes from "./actionTypes";
-import { auth } from "../../firebase";
+import { auth, firestore } from "../../firebase";
 
 export const registerStart = (email) => {
   return {
@@ -25,6 +25,7 @@ export const registerSuccess = (user) => {
     error: null,
     loading: true,
     payload: user,
+    isAuthenticated: true,
   };
 };
 
@@ -117,12 +118,11 @@ export const registerUser = (email, password, notificationCallback) => (
   auth
     .createUserWithEmailAndPassword(email, password)
     .then((data) => {
-      console.log(data);
+      firestore.collection("userProfile").add({ uid: data.user.uid });
       dispatch(registerSuccess(data));
       notificationCallback("Account successfully created", "SUCCESS");
     })
     .catch((err) => {
-      console.log(err.message);
       dispatch(registerFail(err.message));
       notificationCallback(err.message, "ERROR");
     });
@@ -139,6 +139,7 @@ export const signInUser = (email, password, notificationCallback) => (
       console.log(data.user);
       dispatch(authSuccess(data.user));
       notificationCallback(`Welcome back ${data.user.displayName}`, "SUCCESS");
+      // Add a second document with a generated ID.
     })
     .catch((err) => {
       console.log(err);
@@ -278,10 +279,7 @@ export const updateProfilePicture = (photoURL, notificationCallback) => (
   const user = auth.currentUser;
   user
     .updateProfile({
-      // this has to change
-      // atm is hardcoded
-      // https://firebasestorage.googleapis.com/v0/b/${bucket}/o/avatar%2F${photoURL}?alt=media
-      photoURL: `https://firebasestorage.googleapis.com/v0/b/social-network-df1d6.appspot.com/o/avatar%2F${photoURL}?alt=media`,
+      photoURL: `https://firebasestorage.googleapis.com/v0/b/${process.env.REACT_APP_STORAGE_BUCKET}/o/avatar%2F${photoURL}?alt=media`,
     })
     .then((res) => {
       localStorage.removeItem("authUser");
@@ -293,3 +291,22 @@ export const updateProfilePicture = (photoURL, notificationCallback) => (
       notificationCallback(err.message, "ERROR");
     });
 };
+
+// export const test = () => {
+//   // console.log("click");
+//   firestore
+//     .collection("users")
+//     .doc("test")
+//     .set({
+//       first: "Alan",
+//       middle: "Mathison",
+//       last: "Turing",
+//       born: 1912,
+//     })
+//     .then(function (docRef) {
+//       console.log("Document written with ID: ", docRef);
+//     })
+//     .catch(function (error) {
+//       console.error("Error adding document: ", error);
+//     });
+// };
