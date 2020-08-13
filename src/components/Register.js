@@ -68,11 +68,12 @@ const Register = (props) => {
         },
         {
           username: values.username,
+          email: values.email,
         }
       )
       .then(() => {
         runNotifications("Account successfully created", "SUCCESS");
-        history.push("/")
+        history.push("/");
       });
   };
 

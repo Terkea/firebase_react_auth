@@ -8,22 +8,26 @@ import { useHistory, Link } from "react-router-dom";
 // import ChangePassword from "./CustomModal";
 import { runNotifications } from "../helpers/Notification";
 import UploadProfilePicture from "./UploadProfilePicture";
+import { useSelector, connect } from "react-redux";
+import { useFirebase } from "react-redux-firebase";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const MyProfile = (props) => {
+  const firebase = useFirebase();
+  const profile = useSelector((state) => state.firebase.profile);
+  const auth = useSelector((state) => state.firebase.auth);
   // ANTD FORM INPUT TRICKERY
   // https://stackoverflow.com/a/61244400/8193864
   // https://stackoverflow.com/a/62855456/8193864
+  // console.log(error);
 
   const [form] = Form.useForm();
   const [form2] = Form.useForm();
-  const [currentEmail, setCurrentEmail] = useState("");
-  const [avatar, setAvatar] = useState("");
-  const [currentDisplayName, setCurrentDisplayName] = useState("");
-  const [bio, setBio] = useState("");
   const [passwordModalVisibility, setPasswordModalVisibility] = useState(false);
+
+  const [avatar, setAvatar] = useState("");
 
   const styles = {
     logo: {
@@ -39,50 +43,53 @@ const MyProfile = (props) => {
 
   const history = useHistory();
   useEffect(() => {
-    // Check if the user is authenticated
-    if (props.isAuthenticated) {
-      history.push("/");
+    // Set up the default values for the inputs
+    form.setFieldsValue({
+      newEmail: auth.email,
+      displayName: profile.username,
+      bio: profile.bio,
+    });
+
+    if (props.authError) {
+      runNotifications(props.authError.message, "ERROR");
+      setTimeout(function () {
+        window.location.reload();
+      }, 2000);
     }
-
-    // Assign the values with hooks since without it'd crash cuz the app is initialized with a null payload
-    try {
-      setCurrentEmail(props.payload.user.providerData[0].email);
-      setAvatar(props.payload.user.providerData[0].photoURL);
-      setCurrentDisplayName(props.payload.user.providerData[0].displayName);
-      setBio(props.payload.userProfile.data.bio);
-
-      // console.log(props.payload.userProfile.bio);
-
-      // Set up the default values for the inputs
-      form.setFieldsValue({
-        newEmail: currentEmail,
-        displayName: currentDisplayName,
-        bio: bio,
-      });
-    } catch (error) {}
-  }, [
-    currentDisplayName,
-    currentEmail,
-    form,
-    history,
-    props.isAuthenticated,
-    props.payload,
-    bio,
-  ]);
+  }, [form, props.authError, profile.bio, auth.email, profile.username]);
 
   const onFinish = (values) => {
-    props.updateUserProfile(
-      {
-        displayName: values.displayName,
-        newEmail: values.newEmail || currentEmail,
-        oldEmail: props.payload.user.email,
-        password: values.current_password,
-        photoURL: values.photoURL,
-        bio: values.bio,
-        docId: props.payload.userProfile.docId,
-      },
-      runNotifications
-    );
+    if (values.newEmail !== auth.email) {
+      firebase
+        .login({ email: auth.email, password: values.current_password })
+        .then(() => {
+          firebase
+            .updateEmail(values.newEmail)
+            .then(() => {
+              runNotifications(
+                `Email address updated to ${values.newEmail}`,
+                "SUCCESS"
+              );
+            })
+            .catch((e) => {
+              console.log();
+              runNotifications(e.message, "ERROR");
+            });
+        });
+    }
+
+    firebase
+      .login({ email: auth.email, password: values.current_password })
+      .then(() => {
+        firebase
+          .updateProfile({
+            username: values.displayName,
+            bio: values.bio,
+          })
+          .catch((e) => {
+            runNotifications(e.message, "ERROR");
+          });
+      });
   };
 
   const onOkModal = () => {
@@ -90,14 +97,14 @@ const MyProfile = (props) => {
   };
 
   const onFinishModals = (values) => {
-    props.updateUserPassword(
-      {
-        email: props.payload.user.email,
-        currentPassword: values.currentPassword,
-        newPassword: values.newPassword,
-      },
-      runNotifications
-    );
+    // props.updateUserPassword(
+    //   {
+    //     email: props.payload.user.email,
+    //     currentPassword: values.currentPassword,
+    //     newPassword: values.newPassword,
+    //   },
+    //   runNotifications
+    // );
     setPasswordModalVisibility(false);
   };
 
@@ -190,7 +197,7 @@ const MyProfile = (props) => {
           />
         </Row>
         <Row style={{ marginTop: "20px" }} align="center">
-          <UploadProfilePicture />
+          {/* <UploadProfilePicture /> */}
         </Row>
         <Title
           style={{ marginBottom: "30px", marginTop: "30px", maxHeight: "20px" }}
@@ -293,4 +300,11 @@ const MyProfile = (props) => {
   );
 };
 
-export default MyProfile;
+const enhance = connect(
+  // Map redux state to component props
+  ({ firebase: { authError } }) => ({
+    authError,
+  })
+);
+
+export default enhance(MyProfile);
