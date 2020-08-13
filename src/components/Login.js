@@ -15,6 +15,7 @@ import { LockOutlined, RocketOutlined, MailOutlined } from "@ant-design/icons";
 
 import SvgBackground from "../containers/SvgBackground";
 import { runNotifications } from "../helpers/Notification";
+import { useFirebase } from "react-redux-firebase";
 
 const { Title, Text } = Typography;
 
@@ -34,15 +35,10 @@ const styles = {
 };
 
 const Login = (props) => {
+  const firebase = useFirebase();
   const [modalVisibility, setModalVisibility] = useState(false);
   const [form] = Form.useForm();
   const history = useHistory();
-  // Check if the user is authenticated
-  useEffect(() => {
-    if (props.isAuthenticated) {
-      history.push("/");
-    }
-  });
 
   // E-mail autocomplete
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
@@ -75,7 +71,8 @@ const Login = (props) => {
   };
 
   const onFinish = (values) => {
-    props.signInUser(values.email, values.password, runNotifications);
+    console.log(values);
+    firebase.login({ email: values.email, password: values.password });
   };
 
   return (
@@ -190,7 +187,7 @@ const Login = (props) => {
           </Form>
 
           {/* error handling */}
-          {/* {props.error ? <Text type="danger">{props.error}</Text> : null} */}
+          {/* {props.errors ? <Text type="danger">{props.errors}</Text> : null} */}
         </Col>
       </Row>
     </SvgBackground>

@@ -26,6 +26,7 @@ const firebaseConfig = {
 export const rrfConfig = {
   userProfile: "users",
   useFirestoreForProfile: true, // Firestore for Profile instead of Realtime DB
+  attachAuthIsReady: true, // attaches auth is ready promise to store
 };
 
 // Initialize firebase instance

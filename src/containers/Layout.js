@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
+import { useFirebase, isLoaded, isEmpty } from "react-redux-firebase";
+import { useSelector, connect } from "react-redux";
 
 const { Header, Content, Footer } = Layout;
 
 const CustomLayout = (props) => {
+  const auth = useSelector((state) => state.firebase.auth);
+  const firebase = useFirebase();
+  // console.log(isLoaded(auth) && !isEmpty(auth));
+  
   return (
     <Layout className="layout">
       <Header>
@@ -16,29 +22,38 @@ const CustomLayout = (props) => {
 
           {/* PUBLIC ROUTES */}
 
-          {props.isAuthenticated === true ? null : (
+          {!isEmpty(auth) ? null : (
             <Menu.Item key="/login">
               <Link to="/login/">Login</Link>
             </Menu.Item>
           )}
 
-          {props.isAuthenticated === true ? null : (
+          {!isEmpty(auth) ? null : (
             <Menu.Item key="/register">
               <Link to="/register">Register</Link>
             </Menu.Item>
           )}
 
           {/* AUTH ROUTES */}
-          {props.isAuthenticated === true ? (
+          {!isEmpty(auth) ? (
             <Menu.Item key="/my_profile">
               <Link to="/my_profile">My profile</Link>
             </Menu.Item>
           ) : null}
-          {/* {props.isAuthenticated === true ? (
+          {!isEmpty(auth) === true ? (
             <Menu.Item key="/logout">
-              <Link to="/logout">Logout</Link>
+              {/* onClick={} */}
+              <Link
+                to="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  firebase.logout();
+                }}
+              >
+                Logout
+              </Link>
             </Menu.Item>
-          ) : null} */}
+          ) : null}
         </Menu>
       </Header>
       <Content style={{ padding: "0 10px", height: "86vh" }}>
