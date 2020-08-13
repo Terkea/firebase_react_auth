@@ -9,12 +9,11 @@ const { Header, Content, Footer } = Layout;
 const CustomLayout = (props) => {
   const auth = useSelector((state) => state.firebase.auth);
   const firebase = useFirebase();
-  // console.log(isLoaded(auth) && !isEmpty(auth));
-  
+
   return (
     <Layout className="layout">
       <Header>
-        <div className="logo" />
+        {/* <div className="logo" /> */}
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["/"]}>
           <Menu.Item key="/">
             <Link to="/">Home</Link>
@@ -42,7 +41,6 @@ const CustomLayout = (props) => {
           ) : null}
           {!isEmpty(auth) === true ? (
             <Menu.Item key="/logout">
-              {/* onClick={} */}
               <Link
                 to="#"
                 onClick={(e) => {

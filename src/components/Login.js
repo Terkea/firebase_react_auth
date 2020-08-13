@@ -39,7 +39,7 @@ const Login = (props) => {
   const firebase = useFirebase();
   const [modalVisibility, setModalVisibility] = useState(false);
   const [form] = Form.useForm();
-  // const history = useHistory();
+  const history = useHistory();
 
   useEffect(() => {
     if (props.authError) {
@@ -72,14 +72,19 @@ const Login = (props) => {
   };
 
   const onFinishModals = (values) => {
-    // console.log(values);
-    props.forgottenPassword(values.forgottenEmail, runNotifications);
-    setModalVisibility(false);
+    firebase.resetPassword(values.forgottenEmail).then(() => {
+      runNotifications(
+        `Thanks! Please check ${values.forgottenEmail} for a link to reset your password.`,
+        "SUCCESS"
+      );
+    });
   };
 
   const onFinish = (values) => {
     console.log(values);
-    firebase.login({ email: values.email, password: values.password });
+    firebase
+      .login({ email: values.email, password: values.password })
+      .then(() => history.push("/"));
   };
 
   return (

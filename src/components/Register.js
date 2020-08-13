@@ -32,7 +32,7 @@ const styles = {
 };
 
 const Register = (props) => {
-  // const history = useHistory();
+  const history = useHistory();
   const firebase = useFirebase();
   useEffect(() => {
     if (props.authError) {
@@ -60,15 +60,20 @@ const Register = (props) => {
     value: website,
   }));
   const onFinish = (values) => {
-    firebase.createUser(
-      {
-        email: values.email,
-        password: values.password,
-      },
-      {
-        username: values.username,
-      }
-    );
+    firebase
+      .createUser(
+        {
+          email: values.email,
+          password: values.password,
+        },
+        {
+          username: values.username,
+        }
+      )
+      .then(() => {
+        runNotifications("Account successfully created", "SUCCESS");
+        history.push("/")
+      });
   };
 
   return (
@@ -187,4 +192,3 @@ const enhance = connect(
 );
 
 export default enhance(Register);
-
