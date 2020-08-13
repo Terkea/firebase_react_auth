@@ -16,6 +16,7 @@ import { LockOutlined, RocketOutlined, MailOutlined } from "@ant-design/icons";
 import SvgBackground from "../containers/SvgBackground";
 import { runNotifications } from "../helpers/Notification";
 import { useFirebase } from "react-redux-firebase";
+import { connect } from "react-redux";
 
 const { Title, Text } = Typography;
 
@@ -38,7 +39,13 @@ const Login = (props) => {
   const firebase = useFirebase();
   const [modalVisibility, setModalVisibility] = useState(false);
   const [form] = Form.useForm();
-  const history = useHistory();
+  // const history = useHistory();
+
+  useEffect(() => {
+    if (props.authError) {
+      runNotifications(props.authError.message, "ERROR");
+    }
+  }, [props.authError]);
 
   // E-mail autocomplete
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
@@ -185,13 +192,17 @@ const Login = (props) => {
               </Link>
             </Form.Item>
           </Form>
-
-          {/* error handling */}
-          {/* {props.errors ? <Text type="danger">{props.errors}</Text> : null} */}
         </Col>
       </Row>
     </SvgBackground>
   );
 };
 
-export default Login;
+const enhance = connect(
+  // Map redux state to component props
+  ({ firebase: { authError } }) => ({
+    authError,
+  })
+);
+
+export default enhance(Login);

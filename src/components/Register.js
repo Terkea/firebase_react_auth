@@ -2,10 +2,17 @@ import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 
 import { Row, Col, Form, Input, Button, Typography, AutoComplete } from "antd";
-import { LockOutlined, RocketOutlined, MailOutlined } from "@ant-design/icons";
+import {
+  LockOutlined,
+  RocketOutlined,
+  MailOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 
 import SvgBackground from "../containers/SvgBackground";
 import { runNotifications } from "../helpers/Notification";
+import { useFirebase } from "react-redux-firebase";
+import { connect } from "react-redux";
 
 const { Title } = Typography;
 
@@ -25,13 +32,13 @@ const styles = {
 };
 
 const Register = (props) => {
-  const history = useHistory();
-  // Check if the user is authenticated
-  // useEffect(() => {
-  //   if (props.isAuthenticated) {
-  //     history.push("/");
-  //   }
-  // });
+  // const history = useHistory();
+  const firebase = useFirebase();
+  useEffect(() => {
+    if (props.authError) {
+      runNotifications(props.authError.message, "ERROR");
+    }
+  }, [props.authError]);
 
   // E-mail autocomplete
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
@@ -53,7 +60,15 @@ const Register = (props) => {
     value: website,
   }));
   const onFinish = (values) => {
-    props.registerUser(values.email, values.password, runNotifications);
+    firebase.createUser(
+      {
+        email: values.email,
+        password: values.password,
+      },
+      {
+        username: values.username,
+      }
+    );
   };
 
   return (
@@ -91,6 +106,20 @@ const Register = (props) => {
                   prefix={<MailOutlined className="site-form-item-icon" />}
                 />
               </AutoComplete>
+            </Form.Item>
+            <Form.Item
+              name="username"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Username!",
+                },
+              ]}
+            >
+              <Input
+                placeholder="Username"
+                prefix={<UserOutlined className="site-form-item-icon" />}
+              />
             </Form.Item>
 
             <Form.Item
@@ -144,13 +173,18 @@ const Register = (props) => {
               </Button>
             </Form.Item>
           </Form>
-
-          {/* error handling */}
-          {/* {props.error ? <Text type="danger">{props.error}</Text> : null} */}
         </Col>
       </Row>
     </SvgBackground>
   );
 };
 
-export default Register;
+const enhance = connect(
+  // Map redux state to component props
+  ({ firebase: { authError } }) => ({
+    authError,
+  })
+);
+
+export default enhance(Register);
+
