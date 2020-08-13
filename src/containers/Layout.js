@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
-import { useFirebase, isLoaded, isEmpty } from "react-redux-firebase";
-import { useSelector, connect } from "react-redux";
+import { useFirebase, isEmpty } from "react-redux-firebase";
+import { useSelector } from "react-redux";
 
 const { Header, Content, Footer } = Layout;
 

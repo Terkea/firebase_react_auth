@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { withRouter, useHistory, Link } from "react-router-dom";
+import {  useHistory, Link } from "react-router-dom";
 
 import {
   Row,

@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { Input, Form, Row, Col, Typography, Avatar, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
-import { useHistory, Link } from "react-router-dom";
+import { useHistory, Link, withRouter } from "react-router-dom";
 
 // import ChangePassword from "./CustomModal";
 import { runNotifications } from "../helpers/Notification";
 import UploadProfilePicture from "./UploadProfilePicture";
 import { useSelector, connect } from "react-redux";
-import { useFirebase } from "react-redux-firebase";
+import { useFirebase, isEmpty } from "react-redux-firebase";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { TextArea } = Input;
 
 const MyProfile = (props) => {
@@ -23,8 +23,6 @@ const MyProfile = (props) => {
   // https://stackoverflow.com/a/62855456/8193864
 
   const [form] = Form.useForm();
-
-  const [avatar, setAvatar] = useState("");
 
   const styles = {
     logo: {
@@ -40,6 +38,10 @@ const MyProfile = (props) => {
 
   const history = useHistory();
   useEffect(() => {
+    // check if logged in
+    // if (isEmpty(auth)) {
+    //   history.push("/");
+    // }
     // Set up the default values for the inputs
     form.setFieldsValue({
       newEmail: profile.email,
@@ -49,11 +51,16 @@ const MyProfile = (props) => {
 
     if (props.authError) {
       runNotifications(props.authError.message, "ERROR");
-      // setTimeout(function () {
-      //   window.location.reload();
-      // }, 2000);
     }
-  }, [form, props.authError, profile.bio, profile.email, profile.username]);
+  }, [
+    form,
+    history,
+    auth,
+    props.authError,
+    profile.bio,
+    profile.email,
+    profile.username,
+  ]);
 
   const onFinish = (values) => {
     if (values.newEmail !== auth.email) {
@@ -107,13 +114,13 @@ const MyProfile = (props) => {
         <Row align="center">
           <Avatar
             align="middle"
-            src={avatar}
+            src={profile.photoURL}
             size={256}
             icon={<UserOutlined />}
           />
         </Row>
         <Row style={{ marginTop: "20px" }} align="center">
-          {/* <UploadProfilePicture /> */}
+          <UploadProfilePicture />
         </Row>
         <Title
           style={{ marginBottom: "30px", marginTop: "30px", maxHeight: "20px" }}
