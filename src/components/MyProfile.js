@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Input, Form, Row, Col, Typography, Avatar, Button, Modal } from "antd";
+import { Input, Form, Row, Col, Typography, Avatar, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import { useHistory, Link } from "react-router-dom";
@@ -21,11 +21,8 @@ const MyProfile = (props) => {
   // ANTD FORM INPUT TRICKERY
   // https://stackoverflow.com/a/61244400/8193864
   // https://stackoverflow.com/a/62855456/8193864
-  // console.log(error);
 
   const [form] = Form.useForm();
-  const [form2] = Form.useForm();
-  const [passwordModalVisibility, setPasswordModalVisibility] = useState(false);
 
   const [avatar, setAvatar] = useState("");
 
@@ -45,18 +42,18 @@ const MyProfile = (props) => {
   useEffect(() => {
     // Set up the default values for the inputs
     form.setFieldsValue({
-      newEmail: auth.email,
+      newEmail: profile.email,
       displayName: profile.username,
       bio: profile.bio,
     });
 
     if (props.authError) {
       runNotifications(props.authError.message, "ERROR");
-      setTimeout(function () {
-        window.location.reload();
-      }, 2000);
+      // setTimeout(function () {
+      //   window.location.reload();
+      // }, 2000);
     }
-  }, [form, props.authError, profile.bio, auth.email, profile.username]);
+  }, [form, props.authError, profile.bio, profile.email, profile.username]);
 
   const onFinish = (values) => {
     if (values.newEmail !== auth.email) {
@@ -70,6 +67,9 @@ const MyProfile = (props) => {
                 `Email address updated to ${values.newEmail}`,
                 "SUCCESS"
               );
+              firebase.updateProfile({
+                email: values.newEmail,
+              });
             })
             .catch((e) => {
               console.log();
@@ -92,101 +92,17 @@ const MyProfile = (props) => {
       });
   };
 
-  const onOkModal = () => {
-    form2.submit();
-  };
-
-  const onFinishModals = (values) => {
-    // props.updateUserPassword(
-    //   {
-    //     email: props.payload.user.email,
-    //     currentPassword: values.currentPassword,
-    //     newPassword: values.newPassword,
-    //   },
-    //   runNotifications
-    // );
-    setPasswordModalVisibility(false);
+  const resetPassword = () => {
+    firebase.resetPassword(profile.email).then(() => {
+      runNotifications(
+        `Please check ${profile.email} for a link to reset your password.`,
+        "SUCCESS"
+      );
+    });
   };
 
   return (
     <Row justify="center" style={styles.mainRow}>
-      <Modal
-        title="Change password"
-        visible={passwordModalVisibility}
-        onOk={onOkModal}
-        onCancel={() => {
-          setPasswordModalVisibility(false);
-          console.log("Something is fucked");
-        }}
-      >
-        <LockOutlined style={styles.logo} />
-        <Text type="secondary">
-          If you only use words from a dictionary or a purely numeric password,
-          a hacker only has to try a limited list of possibilities.
-        </Text>
-        <Form
-          style={{ marginTop: "20px" }}
-          name="normal_login"
-          className="login-form"
-          initialValues={{ remember: true }}
-          onFinish={onFinishModals}
-          form={form2}
-        >
-          <Form.Item
-            name="currentPassword"
-            label="Current password"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Current password!",
-              },
-            ]}
-          >
-            <Input
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-            />
-          </Form.Item>
-          <Form.Item
-            label="New password"
-            name="newPassword"
-            rules={[
-              { required: true, message: "Please input the new password!" },
-            ]}
-          >
-            <Input
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-            />
-          </Form.Item>
-          <Form.Item
-            name="newPasswordConfirm"
-            label="New password confirm"
-            rules={[
-              {
-                required: true,
-                message: "Please confirm your password!",
-              },
-              ({ getFieldValue }) => ({
-                validator(rule, value) {
-                  if (!value || getFieldValue("newPassword") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    "The two passwords that you entered do not match!"
-                  );
-                },
-              }),
-            ]}
-          >
-            <Input
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
-
       <Col md={14} xs={24}>
         <Row align="center">
           <Avatar
@@ -280,14 +196,7 @@ const MyProfile = (props) => {
                   </Button>
                 </Col>
                 <Col span={12} align="end">
-                  <Link
-                    to="#"
-                    // style={{ marginLeft: "10px", width: "100%" }}
-                    onClick={() => {
-                      setPasswordModalVisibility(true);
-                    }}
-                    type="primary"
-                  >
+                  <Link to="#" onClick={resetPassword} type="primary">
                     Change password
                   </Link>
                 </Col>
