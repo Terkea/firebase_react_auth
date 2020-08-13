@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { withRouter, useHistory, Link } from "react-router-dom";
-import { connect } from "react-redux";
-import * as actions from "../store/actions/user";
 
 import {
   Row,
@@ -199,23 +197,4 @@ const Login = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    loading: state.user.loading,
-    error: state.user.error,
-    payload: state.user.payload,
-    isAuthenticated: state.user.isAuthenticated,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  //
-  return {
-    signInUser: (email, password, callback) =>
-      dispatch(actions.signInUser(email, password, callback)),
-    forgottenPassword: (email, callback) =>
-      dispatch(actions.forgottenPassword(email, callback)),
-  };
-};
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
+export default Login;

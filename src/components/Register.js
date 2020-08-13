@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import { withRouter, useHistory } from "react-router-dom";
-import * as actions from "../store/actions/user";
 
 import { Row, Col, Form, Input, Button, Typography, AutoComplete } from "antd";
 import { LockOutlined, RocketOutlined, MailOutlined } from "@ant-design/icons";
@@ -29,11 +27,11 @@ const styles = {
 const Register = (props) => {
   const history = useHistory();
   // Check if the user is authenticated
-  useEffect(() => {
-    if (props.isAuthenticated) {
-      history.push("/");
-    }
-  });
+  // useEffect(() => {
+  //   if (props.isAuthenticated) {
+  //     history.push("/");
+  //   }
+  // });
 
   // E-mail autocomplete
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
@@ -155,23 +153,4 @@ const Register = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    loading: state.user.loading,
-    error: state.user.error,
-    payload: state.user.payload,
-    isAuthenticated: state.user.isAuthenticated,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  //
-  return {
-    registerUser: (email, password, callback) =>
-      dispatch(actions.registerUser(email, password, callback)),
-  };
-};
-
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(Register)
-);
+export default Register;

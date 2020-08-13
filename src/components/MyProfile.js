@@ -4,8 +4,7 @@ import { Input, Form, Row, Col, Typography, Avatar, Button, Modal } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import { useHistory, Link } from "react-router-dom";
-import { connect } from "react-redux";
-import * as actions from "../store/actions/user";
+
 // import ChangePassword from "./CustomModal";
 import { runNotifications } from "../helpers/Notification";
 import UploadProfilePicture from "./UploadProfilePicture";
@@ -294,21 +293,4 @@ const MyProfile = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    loading: state.user.loading,
-    error: state.user.error,
-    payload: state.user.payload,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateUserProfile: (data, callback) =>
-      dispatch(actions.updateProfile(data, callback)),
-    updateUserPassword: (data, callback) =>
-      dispatch(actions.updatePassword(data, callback)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MyProfile);
+export default MyProfile;

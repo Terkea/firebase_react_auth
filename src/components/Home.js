@@ -14,12 +14,4 @@ const Home = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    loading: state.user.loading,
-    error: state.user.error,
-    payload: state.user.payload,
-  };
-};
-
-export default connect(mapStateToProps, null)(Home);
+export default Home;
